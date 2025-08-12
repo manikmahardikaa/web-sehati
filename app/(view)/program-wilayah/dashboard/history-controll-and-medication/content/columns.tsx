@@ -1,25 +1,36 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from "react";
 import { Table, Tag } from "antd";
+import type { ColumnsType } from "antd/es/table";
 import dayjs from "dayjs";
 import { CaretDownOutlined, CaretRightOutlined } from "@ant-design/icons";
 import { PatientDataModel } from "@/app/models/program-wilayah/patient";
 import { ControllHistoryDataModel } from "@/app/models/petugas-lapangan/controll-history";
 import { MedicationHistoryDataModel } from "@/app/models/petugas-lapangan/medical-history";
 
-// Helper: label status sesuai type
+// Shared row shape yang dipakai table detail
+type HistoryRow = {
+  id?: string;
+  date?: string | Date | null;
+  status?: boolean | null;
+  updatedAt?: string | Date | null;
+};
+
 const STATUS_LABEL = {
   controll: { true: "Sudah Kontrol", false: "Belum Kontrol" },
   medication: { true: "Sudah Diambil", false: "Belum Diambil" },
-};
+} as const;
 
-// Komponen tabel detail (kontrol/medication)
 function HistoryDetailTable({
   type,
   data,
 }: {
   type: "controll" | "medication";
-  data: ControllHistoryDataModel | MedicationHistoryDataModel | null[];
+  // Selalu array, tak perlu union objek tunggal / null[]
+  data: HistoryRow[];
 }) {
+  const rows = Array.isArray(data) ? data.filter(Boolean) : [];
+
   return (
     <div
       style={{
@@ -52,35 +63,41 @@ function HistoryDetailTable({
           </tr>
         </thead>
         <tbody>
-          {data && data.length > 0 ? (
-            data.map((row, idx) => (
-              <tr key={row.id || idx}>
-                <td style={{ padding: 6 }}>
-                  {dayjs(row.date).format("DD-MM-YYYY")}
-                </td>
-                <td style={{ padding: 6 }}>
-                  <Tag
-                    color={row.status ? "green" : "red"}
-                    style={{
-                      border: `1.5px solid ${
-                        row.status ? "#50cd89" : "#f44336"
-                      }`,
-                      background: "#fff",
-                      color: row.status ? "#50cd89" : "#f44336",
-                      fontWeight: 500,
-                      borderRadius: 6,
-                    }}
-                  >
-                    {STATUS_LABEL[type][row.status ? "true" : "false"]}
-                  </Tag>
-                </td>
-                <td style={{ padding: 6, color: "#888" }}>
-                  {row.status && row.updatedAt
-                    ? dayjs(row.updatedAt).format("DD-MM-YYYY HH.mm")
-                    : "-"}
-                </td>
-              </tr>
-            ))
+          {rows.length > 0 ? (
+            rows.map((row: HistoryRow, idx: number) => {
+              const dateStr = row?.date
+                ? dayjs(row.date).format("DD-MM-YYYY")
+                : "-";
+              const done = !!row?.status;
+              const label =
+                STATUS_LABEL[type][
+                  done ? "true" : ("false" as "true" | "false")
+                ];
+              const doneAt =
+                done && row?.updatedAt
+                  ? dayjs(row.updatedAt).format("DD-MM-YYYY HH.mm")
+                  : "-";
+              return (
+                <tr key={row.id ?? idx}>
+                  <td style={{ padding: 6 }}>{dateStr}</td>
+                  <td style={{ padding: 6 }}>
+                    <Tag
+                      color={done ? "green" : "red"}
+                      style={{
+                        border: `1.5px solid ${done ? "#50cd89" : "#f44336"}`,
+                        background: "#fff",
+                        color: done ? "#50cd89" : "#f44336",
+                        fontWeight: 500,
+                        borderRadius: 6,
+                      }}
+                    >
+                      {label}
+                    </Tag>
+                  </td>
+                  <td style={{ padding: 6, color: "#888" }}>{doneAt}</td>
+                </tr>
+              );
+            })
           ) : (
             <tr>
               <td colSpan={3}>Belum ada data riwayat</td>
@@ -94,20 +111,19 @@ function HistoryDetailTable({
 
 export default function ExpandableHistoryTable({
   type = "controll",
-  patients
+  patients,
 }: {
   type?: "controll" | "medication";
-  patients: PatientDataModel[]
+  patients: PatientDataModel[];
 }) {
-
-  // Table columns utama
-  const columns = [
+  // Kolom utama, ketik dengan ColumnsType
+  const columns: ColumnsType<PatientDataModel> = [
     {
       title: "No",
       key: "no",
       align: "center",
       width: 60,
-      render: (_: string, __: PatientDataModel, idx: number) => idx + 1,
+      render: (_: unknown, __: PatientDataModel, idx: number) => idx + 1,
     },
     {
       title: "Nama Pasien",
@@ -132,24 +148,33 @@ export default function ExpandableHistoryTable({
     },
   ];
 
-  // Expandable configuration
   return (
-    <Table
+    <Table<PatientDataModel>
       columns={columns}
       dataSource={patients}
       rowKey="id"
       pagination={{ pageSize: 10 }}
       scroll={{ x: "max-content" }}
-      // ICON DITAMPILKAN DI KOLOM WhatsApp (indeks ke-2)
-      expandIconColumnIndex={4}
+      // Kamu ingin icon di kolom WhatsApp (index 2)
+      expandIconColumnIndex={2}
       expandable={{
         expandedRowRender: (record) => (
           <HistoryDetailTable
             type={type}
             data={
-              type === "controll"
-                ? record.controllHistory || []
-                : record.medicationHistory || []
+              (type === "controll"
+                ? (record.controllHistory as
+                    | ControllHistoryDataModel[]
+                    | undefined)
+                : (record.medicationHistory as
+                    | MedicationHistoryDataModel[]
+                    | undefined)
+              )?.map((r) => ({
+                id: (r as any).id,
+                date: (r as any).date,
+                status: (r as any).status,
+                updatedAt: (r as any).updatedAt,
+              })) ?? []
             }
           />
         ),
