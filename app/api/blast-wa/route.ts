@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import {  NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import {
   formatPhoneNumber,
@@ -8,7 +8,7 @@ import { GeneralError } from "@/app/utils/general-error";
 
 const prisma = new PrismaClient();
 
-export async function POST(req: NextRequest) {
+export async function POST() {
   try {
     const now = new Date();
     const jobs = await prisma.waBlastSchedule.findMany({

@@ -1,4 +1,4 @@
-import { RegionPayloadCreateModel } from "@/app/models/admin/region";
+import { RegionPayloadUpdateModel } from "@/app/models/admin/region";
 import { DELETE_REGION, UPDATE_REGION } from "@/app/providers/admin/region";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -8,7 +8,7 @@ export const PUT = async (
 ) => {
   try {
     const id = params.id;
-    const payload: RegionPayloadCreateModel = await req.json();
+    const payload: RegionPayloadUpdateModel = await req.json();
 
     const data = await UPDATE_REGION(id, payload);
 
