@@ -69,21 +69,21 @@ export const PatientColumns = ({
       title: "Wilayah",
       key: "district",
       render: (record: PatientDataModel) => {
-        return record.petugas_lapangan.authority?.region?.name;
+        return record.petugas_lapangan?.authority?.region?.name;
       },
     },
     {
       title: "Petugas Lapangan",
       key: "name",
       render: (record: PatientDataModel) => {
-        return record.petugas_lapangan.name;
+        return record.petugas_lapangan?.name;
       },
     },
     {
       title: "Progam Wilayah",
       key: "name",
       render: (record: PatientDataModel) => {
-        return record.petugas_lapangan.authority?.name;
+        return record.petugas_lapangan?.authority?.name;
       }
     },
     {
