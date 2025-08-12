@@ -242,12 +242,12 @@ export default function PatienDetailDataContent() {
           <InfoField
             label="Wilayah"
             value={
-              detailPatient.petugas_lapangan.authority?.region?.name || "-"
+              detailPatient.petugas_lapangan?.authority?.region?.name || "-"
             }
           />
           <InfoField
             label="Nama Petugas"
-            value={detailPatient.petugas_lapangan.authority?.name || "-"}
+            value={detailPatient.petugas_lapangan?.authority?.name || "-"}
             last
           />
         </div>
