@@ -1,5 +1,10 @@
-import Title from "antd/es/typography/Title";
+import User from "./(view)/(user)/home/page";
+import Layout from "./(view)/(user)/layout";
 
 export default function Home() {
-  return <Title>Testing</Title>;
+  return (
+    <Layout>
+      <User />
+    </Layout>
+  );
 }

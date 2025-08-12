@@ -6,7 +6,6 @@
 
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 datasource db {
@@ -14,11 +13,299 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  ADMIN
+  PETUGAS_KESEHATAN
+  PROGRAM_WILAYAH
+  PETUGAS_LAPANGAN
+}
+
+enum Gender {
+  LAKI_LAKI
+  PEREMPUAN
+}
+
 model User {
+  id           String  @id @default(cuid())
+  email        String  @unique
+  name         String
+  password     String
+  role         Role
+  no_whatsapp  String
+  region_id    String?
+  subregion_id String?
+  authority_id String?
+
+  region    Region?    @relation("UserRegion", fields: [region_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  subregion Subregion? @relation("UserSubregion", fields: [subregion_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  authority    User?  @relation("UserAuthority", fields: [authority_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  subordinates User[] @relation("UserAuthority")
+
+  deletedAt  DateTime?
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  Patient    Patient[]
+  WaBlastADS WaBlastADS[]
+
+  @@map("user")
+}
+
+model Contact {
+  id             String       @id @default(cuid())
+  name           String
+  departement_id String?
+  departement    Departement? @relation("DepartementContact", fields: [departement_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  no_whatsapp    String
+  deletedAt      DateTime?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@map("contact")
+}
+
+model Region {
+  id         String      @id @default(cuid())
+  name       String
+  subregions Subregion[]
+  users      User[]      @relation("UserRegion")
+  deletedAt  DateTime?
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+
+  @@map("region")
+}
+
+model Subregion {
+  id        String    @id @default(cuid())
+  name      String
+  region_id String
+  region    Region    @relation(fields: [region_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  users     User[]    @relation("UserSubregion")
+  deletedAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@map("subregion")
+}
+
+model Departement {
+  id        String    @id @default(cuid())
+  name      String
+  contacts  Contact[] @relation("DepartementContact")
+  deletedAt DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@map("departement")
+}
+
+model Film {
+  id            String    @id @default(cuid())
+  name          String
+  video_url     String
+  thumbnail_url String
+  description   String    @db.LongText
+  is_published  Boolean   @default(false)
+  deletedAt     DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  surveys Survey[]
+
+  @@map("film")
+}
+
+model Survey {
   id        String   @id @default(cuid())
-  email     String   @unique
-  name      String?
-  password  String
+  film      Film     @relation(fields: [film_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  film_id   String
+  question  String
+  time      Int
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  options SurveyOption[]
+
+  @@map("survey")
+}
+
+model SurveyOption {
+  id        String  @id @default(cuid())
+  survey    Survey  @relation(fields: [survey_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  survey_id String
+  text      String
+  isCorrect Boolean @default(false)
+
+  @@map("survey_option")
+}
+
+model PocketBook {
+  id           String    @id @default(cuid())
+  name         String
+  url          String
+  description  String    @db.LongText
+  is_published Boolean
+  deletedAt    DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@map("pocket_book")
+}
+
+model ContentCreator {
+  id           String    @id @default(cuid())
+  name         String
+  url          String
+  is_published Boolean
+  deletedAt    DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@map("content_creator")
+}
+
+model Psikologi {
+  id               String             @id @default(cuid())
+  name             String
+  no_whatsapp      String
+  image_url        String?
+  region           String
+  gender           Gender
+  deletedAt        DateTime?
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  waBlastPsikologi WaBlastPsikologi[]
+
+  @@map("psikologi")
+}
+
+model News {
+  id            String    @id @default(cuid())
+  name          String
+  body          String    @db.LongText
+  thumbnail_url String
+  is_published  Boolean
+  deletedAt     DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  @@map("news")
+}
+
+model Patient {
+  id                String    @id @default(cuid())
+  name              String
+  no_whatsapp       String
+  street            String
+  birth_date        DateTime
+  gender            Gender    @default(LAKI_LAKI)
+  year_of_diagnosis Int
+  deletedAt         DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  petugas_lapangan_id String?
+  petugas_lapangan    User?               @relation(fields: [petugas_lapangan_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  controllHistory     ControllHistory[]
+  medicationHistory   MedicationHistory[]
+  waBlastADS          WaBlastADS[]
+
+  @@map("patient")
+}
+
+model ControllHistory {
+  id         String    @id @default(cuid())
+  patient_id String
+  patient    Patient   @relation(fields: [patient_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  date       DateTime
+  deletedAt  DateTime?
+  status     Boolean   @default(false)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  @@map("controll_history")
+}
+
+model MedicationHistory {
+  id         String    @id @default(cuid())
+  patient_id String
+  patient    Patient   @relation(fields: [patient_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  date       DateTime
+  deletedAt  DateTime?
+  status     Boolean   @default(false)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  @@map("medication_history")
+}
+
+model WaBlastSchedule {
+  id            String    @id @default(cuid())
+  phone_numbers String
+  subject       String
+  message       String
+  scheduled_at  DateTime?
+  status        String    @default("PENDING")
+  count_contact Int
+  created_at    DateTime  @default(now())
+  sent_at       DateTime?
+
+  @@map("wa_blast_schedule")
+}
+
+model WaBlastPsikologi {
+  id            String    @id @default(cuid())
+  phone_numbers String
+  message       String
+  report_url    String
+  psikologi_id  String
+  psikologi     Psikologi @relation(fields: [psikologi_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  status        String    @default("PENDING")
+  created_at    DateTime  @default(now())
+
+  @@map("wa_blast_psikologi")
+}
+
+model WaBlastADS {
+  id                  String    @id @default(cuid())
+  phone_numbers       String
+  subject             String
+  patient_id          String
+  patient             Patient   @relation(fields: [patient_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  petugas_lapangan_id String
+  petugas_lapangan    User?     @relation(fields: [petugas_lapangan_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  message             String
+  scheduled_at        DateTime?
+  status              String    @default("PENDING")
+  count_contact       Int
+  created_at          DateTime  @default(now())
+  sent_at             DateTime?
+
+  @@map("wa_blast_ads")
+}
+
+model WaBlastPatientControl {
+  id            String    @id @default(cuid())
+  phone_numbers String
+  subject       String
+  message       String
+  scheduled_at  DateTime?
+  status        String    @default("PENDING")
+  count_contact Int
+  created_at    DateTime  @default(now())
+  sent_at       DateTime?
+
+  @@map("wa_blast_patient_control")
+}
+
+model Report {
+  id          String   @id @default(cuid())
+  name        String
+  type_report String
+  report_url  String
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  @@map("report")
 }
