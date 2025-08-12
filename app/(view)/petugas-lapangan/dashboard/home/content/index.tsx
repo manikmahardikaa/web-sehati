@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import React from "react";
 import { Card, Row, Col, Typography, Statistic } from "antd";
@@ -50,7 +51,7 @@ export default function DashboardContent() {
       ).length
     : 0;
 
-  const barOptions = {
+  const barOptions: any = {
     chart: { type: "bar", toolbar: { show: false } },
     plotOptions: { bar: { borderRadius: 6, columnWidth: "40%" } },
     colors: ["#C30010"],
@@ -76,7 +77,7 @@ export default function DashboardContent() {
     },
   ];
 
-  const pieOptions = {
+  const pieOptions: any = {
     labels: ["Sudah Kontrol", "Belum Kontrol"],
     colors: ["#7ED957", "#C30010"],
     legend: { position: "bottom" },
@@ -89,10 +90,10 @@ export default function DashboardContent() {
   if (patientData) {
     patientData.forEach((p) => {
       const kontrol =
-        (Array.isArray(p.controllHistory) &&
-          p.controllHistory.some((h) => h.status === true)) &&
-        (Array.isArray(p.medicationHistory) &&
-          p.medicationHistory.some((h) => h.status === true));
+        Array.isArray(p.controllHistory) &&
+        p.controllHistory.some((h) => h.status === true) &&
+        Array.isArray(p.medicationHistory) &&
+        p.medicationHistory.some((h) => h.status === true);
 
       if (kontrol) {
         sudahKontrol += 1;
