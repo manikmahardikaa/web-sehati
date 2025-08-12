@@ -1,54 +1,63 @@
 import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
 
-// Styles mirip dengan gambar
 const styles = StyleSheet.create({
   page: { padding: 24, fontFamily: "Helvetica" },
   title: {
     fontSize: 16,
     textAlign: "center",
     marginBottom: 18,
-    fontWeight: "bold",
     fontFamily: "Helvetica-Bold",
   },
   table: {
-    display: "table",
     width: "100%",
     marginTop: 6,
     borderStyle: "solid",
     borderWidth: 1,
     borderColor: "#e2bcbc",
     borderRadius: 7,
-    overflow: "hidden",
   },
   tableRow: { flexDirection: "row" },
-  tableHeader: {
+
+  tableHeaderRow: {
+    flexDirection: "row",
     backgroundColor: "#f6eaea",
-    fontWeight: "bold",
-    fontFamily: "Helvetica-Bold",
   },
+
   cell: {
-    borderRight: "1px solid #e1cfcf",
-    borderBottom: "1px solid #e1cfcf",
     padding: 7,
     fontSize: 11,
     textAlign: "center",
     flexGrow: 1,
-    flexBasis: 0,
+    // borders (react-pdf style)
+    borderRightWidth: 1,
+    borderRightColor: "#e1cfcf",
+    borderBottomWidth: 1,
+    borderBottomColor: "#e1cfcf",
   },
+
   headerCell: {
-    fontWeight: "bold",
-    fontFamily: "Helvetica-Bold",
-    color: "#c30010",
-    backgroundColor: "#f6eaea",
-    fontSize: 11.5,
     padding: 7,
+    fontSize: 11.5,
+    color: "#c30010",
+    fontFamily: "Helvetica-Bold",
+    borderRightWidth: 1,
+    borderRightColor: "#e1cfcf",
+    borderBottomWidth: 1,
+    borderBottomColor: "#e1cfcf",
   },
+
   firstCell: {
-    borderLeft: "1px solid #e1cfcf",
+    borderLeftWidth: 1,
+    borderLeftColor: "#e1cfcf",
   },
   lastCell: {
-    borderRight: "1px solid #e1cfcf",
+    borderRightWidth: 1,
+    borderRightColor: "#e1cfcf",
   },
+
+  // Optional: kontrol lebar relatif
+  colWide: { flexGrow: 1.2 },
+  colNarrow: { flexGrow: 0.8 },
 });
 
 type ComplianceRowData = {
@@ -72,31 +81,55 @@ export default function ComplianceReportPDF({
     <Document>
       <Page style={styles.page}>
         <Text style={styles.title}>{title}</Text>
+
         <View style={styles.table}>
-          {/* Table Header */}
-          <View style={[styles.tableRow, styles.tableHeader]}>
-            <Text style={[styles.cell, styles.headerCell, styles.firstCell]}>
+          {/* Header */}
+          <View style={styles.tableHeaderRow}>
+            <Text style={[styles.headerCell, styles.firstCell, styles.colWide]}>
               Petugas Lapangan
             </Text>
-            <Text style={[styles.cell, styles.headerCell]}>Nama Pasien</Text>
-            <Text style={styles.cell}>Total Jadwal Kontrol</Text>
-            <Text style={styles.cell}>Total Kontrol Terlaksana</Text>
-            <Text style={styles.cell}>Total Jadwal Pengambilan Obat</Text>
-            <Text style={styles.cell}>Total Pengambilan Obat Terlaksana</Text>
-            <Text style={[styles.cell, styles.headerCell, styles.lastCell]}>
+            <Text style={[styles.headerCell, styles.colWide]}>Nama Pasien</Text>
+            <Text style={[styles.headerCell, styles.colNarrow]}>
+              Total Jadwal Kontrol
+            </Text>
+            <Text style={[styles.headerCell, styles.colNarrow]}>
+              Total Kontrol Terlaksana
+            </Text>
+            <Text style={[styles.headerCell, styles.colNarrow]}>
+              Total Jadwal Pengambilan Obat
+            </Text>
+            <Text style={[styles.headerCell, styles.colNarrow]}>
+              Total Pengambilan Obat Terlaksana
+            </Text>
+            <Text
+              style={[styles.headerCell, styles.lastCell, styles.colNarrow]}
+            >
               Persentase Kepatuhan (%)
             </Text>
           </View>
-          {/* Table Rows */}
+
+          {/* Rows */}
           {data.map((row, idx) => (
             <View style={styles.tableRow} key={idx}>
-              <Text style={[styles.cell, styles.firstCell]}>{row.officer}</Text>
-              <Text style={styles.cell}>{row.patientName}</Text>
-              <Text style={styles.cell}>{row.jadwalKontrol}</Text>
-              <Text style={styles.cell}>{row.kontrolTerlaksana}</Text>
-              <Text style={styles.cell}>{row.jadwalObat}</Text>
-              <Text style={styles.cell}>{row.obatTerlaksana}</Text>
-              <Text style={[styles.cell, styles.lastCell]}>
+              <Text style={[styles.cell, styles.firstCell, styles.colWide]}>
+                {row.officer}
+              </Text>
+              <Text style={[styles.cell, styles.colWide]}>
+                {row.patientName}
+              </Text>
+              <Text style={[styles.cell, styles.colNarrow]}>
+                {row.jadwalKontrol}
+              </Text>
+              <Text style={[styles.cell, styles.colNarrow]}>
+                {row.kontrolTerlaksana}
+              </Text>
+              <Text style={[styles.cell, styles.colNarrow]}>
+                {row.jadwalObat}
+              </Text>
+              <Text style={[styles.cell, styles.colNarrow]}>
+                {row.obatTerlaksana}
+              </Text>
+              <Text style={[styles.cell, styles.lastCell, styles.colNarrow]}>
                 {row.compliance}
               </Text>
             </View>

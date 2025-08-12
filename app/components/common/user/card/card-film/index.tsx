@@ -21,8 +21,8 @@ export default function CardFilm({
   };
   // Simulasi
   const views = "100rb penonton";
-  const author = data.author || "Content Creator";
-  const authorAvatar = data.authorAvatar || null;
+  const author = "Content Creator";
+  const authorAvatar = null;
 
   return (
     <Card
@@ -85,7 +85,7 @@ export default function CardFilm({
             fontWeight: 600,
           }}
         >
-          {data.duration || "16:25"}
+          {"16:25"}
         </div>
       </div>
 

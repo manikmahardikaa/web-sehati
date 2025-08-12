@@ -58,7 +58,7 @@ export const UserColumns = ({
       key: "penanggung_jawab",
       render: (record: UserDataModel) => {
         if (record.role === "PETUGAS_LAPANGAN") {
-          return record.authority?.name ?? "-";
+          return record.authority?.user?.name ?? "-";
         } else {
           return "-";
         }
