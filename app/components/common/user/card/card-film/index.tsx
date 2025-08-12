@@ -113,7 +113,7 @@ export default function CardFilm({
         </div>
         {/* Views & Date */}
         <div style={{ fontSize: 12, color: "#888", marginTop: 6 }}>
-          {views} · {formatDate(data.createdAt || "")}
+          {views} · {formatDate(data.createdAt.toString() || "")}
         </div>
       </div>
     </Card>
