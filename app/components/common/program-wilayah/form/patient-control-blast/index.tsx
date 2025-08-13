@@ -141,7 +141,6 @@ export default function FormPatientControlBlast({
           {/* Date Picker */}
           <DatePicker
             style={{ marginBottom: 12 }}
-            fullscreen={false}
             dateRender={(current) => {
               const tgl = current.format("YYYY-MM-DD");
               const isMedH3 = medicationEventDates.has(tgl);

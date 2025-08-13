@@ -31,7 +31,19 @@ export default function CardContentCreator({
     >
       {/* AVATAR */}
       <Avatar
-        src={data.image_url}
+        src={`data:image/svg+xml;utf8,
+    <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">
+      <circle cx="20" cy="20" r="20" fill="#fad233" />
+      <text x="50%" y="53%" textAnchor="middle" fill="#fff" font-size="18" dy=".3em">
+        ${data.name
+          .split(" ")
+          .map((n) => n[0])
+          .join("")
+          .slice(0, 2)
+          .toUpperCase()}
+      </text>
+    </svg>
+  `}
         alt={data.name}
         size={70}
         style={{
@@ -40,28 +52,7 @@ export default function CardContentCreator({
           fontSize: 40,
           marginBottom: 10,
         }}
-      >
-        {!data.image_url && (
-          <svg height="40" viewBox="0 0 40 40">
-            <circle cx="20" cy="20" r="20" fill="#fad233" />
-            <text
-              x="50%"
-              y="53%"
-              textAnchor="middle"
-              fill="#fff"
-              fontSize="18"
-              dy=".3em"
-            >
-              {data.name
-                ?.split(" ")
-                .map((n: string) => n[0])
-                .join("")
-                .slice(0, 2)
-                .toUpperCase()}
-            </text>
-          </svg>
-        )}
-      </Avatar>
+      />
       {/* NAME */}
       <Text
         style={{

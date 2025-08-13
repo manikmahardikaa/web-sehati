@@ -24,7 +24,6 @@ export default function DownloadReportMedicationModal({
   open,
   onCancel,
   patients = [],
-  namaPetugas = "",
 }: {
   open: boolean;
   onCancel: () => void;

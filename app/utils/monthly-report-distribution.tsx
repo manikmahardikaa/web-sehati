@@ -10,7 +10,14 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontFamily: "Helvetica-Bold",
   },
-  table: { display: "table", width: "100%" },
+  table: {
+    width: "100%",
+    marginTop: 6,
+    borderStyle: "solid",
+    borderWidth: 1,
+    borderColor: "#e2bcbc",
+    borderRadius: 7,
+  },
   tableRow: { flexDirection: "row" },
   tableHeader: {
     backgroundColor: "#f6eaea", // Soft red-pink
