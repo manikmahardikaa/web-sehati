@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // components/common/patient-detail-pdf.tsx
 import { PatientDataModel } from "@/app/models/petugas-lapangan/patient";
 import {
@@ -11,11 +12,6 @@ import dayjs from "dayjs";
 
 // Font.register({ family: 'Poppins', src: 'URL_FONT' }) // kalau mau custom font
 
-interface HistoryItem {
-  id: string;
-  date: string;
-  status: boolean;
-}
 
 const styles = StyleSheet.create({
   page: {
@@ -116,7 +112,7 @@ export function PatientDetailPDF({ detailPatient }: { detailPatient: PatientData
             {[
               ["Nama Lengkap", detailPatient.name || "-"],
               ["Alamat", detailPatient.street || "-"],
-              ["Tanggal Lahir", formatTanggal(detailPatient.birth_date)],
+              ["Tanggal Lahir", formatTanggal(detailPatient.birth_date.toISOString()) || "-"],
               ["No. WhatsApp", detailPatient.no_whatsapp || "-"],
               ["Tahun Diagnosa", detailPatient.year_of_diagnosis || "-"],
               [
