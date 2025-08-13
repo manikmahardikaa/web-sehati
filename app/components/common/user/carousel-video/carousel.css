@@ -1,15 +1,40 @@
-/* carousel.css */
+/* Stabilkan tinggi slick agar mengikuti ratio box */
+.video-carousel .slick-list,
+.video-carousel .slick-track,
+.video-carousel .slick-slide,
+.video-carousel .slick-slide > div {
+  height: auto !important;
+}
 
-.ant-carousel .slick-dots li button {
-    background: rgba(255, 255, 255, 0.4);
+/* Biar sudut rounded ikut ke dalam konten */
+.video-carousel .slick-list {
+  overflow: hidden;
+  border-radius: 20px;
+}
+
+/* Dots & arrows (opsional) */
+.video-carousel .slick-dots li button {
+  background: rgba(255, 255, 255, 0.4);
+}
+.video-carousel .slick-dots li.slick-active button {
+  background: #ffffff;
+}
+.video-carousel .slick-arrow {
+  color: #fff;
+  font-size: 20px;
+  z-index: 2;
+}
+
+/* Responsif: minimum tinggi yang nyaman di mobile */
+@media (max-width: 480px) {
+  .video-carousel .ratio {
+    min-height: 200px; /* menjaga tidak terlalu gepeng */
   }
-  
-  .ant-carousel .slick-dots li.slick-active button {
-    background: #ffffff;
+}
+
+/* “Cinematic” di layar lebar: 21:9 */
+@media (min-width: 1280px) {
+  .video-carousel .ratio {
+    padding-top: 42.857%; /* 9/21 * 100 */
   }
-  
-  .ant-carousel .slick-arrow {
-    color: #fff;
-    font-size: 20px;
-    z-index: 1;
-  }
+}
