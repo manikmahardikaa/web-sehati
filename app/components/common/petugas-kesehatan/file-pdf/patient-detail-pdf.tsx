@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // components/common/patient-detail-pdf.tsx
 import { PatientDataModel } from "@/app/models/petugas-kesehatan/patient";
 import maskName from "@/app/utils/mask-name";
@@ -5,12 +6,6 @@ import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
 import dayjs from "dayjs";
 
 // Font.register({ family: 'Poppins', src: 'URL_FONT' }) // kalau mau custom font
-
-interface HistoryItem {
-  id: string;
-  date: string;
-  status: boolean;
-}
 
 const styles = StyleSheet.create({
   page: {
@@ -117,7 +112,7 @@ export function PatientDetailPDF({
               ["Alamat", maskName(detailPatient.street || "-")],
               [
                 "Tanggal Lahir",
-                maskName(formatTanggal(detailPatient.birth_date)),
+                maskName(formatTanggal(detailPatient.birth_date.toISOString())),
               ],
               ["No. WhatsApp", detailPatient.no_whatsapp || "-"],
               ["Tahun Diagnosa", detailPatient.year_of_diagnosis || "-"],
@@ -131,9 +126,9 @@ export function PatientDetailPDF({
               ],
               [
                 "Wilayah",
-                detailPatient.petugas_lapangan.authority?.region?.name,
+                detailPatient.petugas_lapangan?.authority?.region?.name,
               ],
-              ["Nama Petugas", detailPatient.petugas_lapangan.authority?.name],
+              ["Nama Petugas", detailPatient.petugas_lapangan?.authority?.name],
             ].map(([label, val]) => (
               <View key={label} style={styles.infoRow}>
                 <Text style={styles.infoLabel}>{label}</Text>
