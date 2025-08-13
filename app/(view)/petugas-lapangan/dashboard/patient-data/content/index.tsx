@@ -1,6 +1,8 @@
+// PatientDataContent.tsx
 import { usePatient, usePatients } from "@/app/hooks/petugas-lapangan/patient";
 import {
   PatientDataModel,
+  PatientFormModel,
   PatientPayloadCreateModel,
 } from "@/app/models/petugas-lapangan/patient";
 import { Flex, Form, Table } from "antd";
@@ -16,19 +18,19 @@ import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
 
 export default function PatientDataContent() {
-  const [form] = Form.useForm<PatientDataModel>();
+  // ❗ Form khusus untuk PatientFormModel
+  const [form] = Form.useForm<PatientFormModel>();
+
   const [modalOpen, setModalOpen] = useState(false);
   const [modalType, setModalType] = useState<"create" | "update">("create");
   const [selectedPatient, setSelectedPatient] =
     useState<PatientDataModel | null>(null);
 
   const [searchKeyword, setSearchKeyword] = useState("");
-
   const router = useRouter();
 
-  const handleSearch = (keyword: string) => {
+  const handleSearch = (keyword: string) =>
     setSearchKeyword(keyword.trim().toLowerCase());
-  };
 
   const {
     data: patients = [],
@@ -38,23 +40,46 @@ export default function PatientDataContent() {
   } = usePatients({});
 
   const filteredPatient = patients.filter((patient) =>
-    patient.name.toLowerCase().includes(searchKeyword)
+    (patient.name ?? "").toLowerCase().includes(searchKeyword)
   );
+
   const { onUpdate: updatePatient, onUpdateLoading: updatePatientLoading } =
     usePatient({ id: selectedPatient?.id ?? "" });
 
   const { user_id } = useAuth();
 
+  // Map DB -> Form (tanggal jadi dayjs)
+  const mapDataToForm = (
+    p: PatientDataModel | null
+  ): PatientFormModel | undefined => {
+    if (!p) return undefined;
+    return {
+      name: p.name ?? "",
+      street: p.street ?? "",
+      no_whatsapp: p.no_whatsapp ?? "",
+      birth_date: p.birth_date ? dayjs(p.birth_date) : undefined,
+      gender: p.gender ?? undefined,
+      year_of_diagnosis: p.year_of_diagnosis ?? undefined,
+      petugas_lapangan_id: p.petugas_lapangan_id ?? null,
+      deletedAt: p.deletedAt ?? null,
+      createdAt: p.createdAt ?? undefined,
+      updatedAt: p.updatedAt ?? undefined,
+      controllHistory: p.controllHistory ?? [],
+      medicationHistory: p.medicationHistory ?? [],
+    };
+  };
+
   const handleEdit = useCallback(
     (id: string) => {
-      const toEdit = patients.find((c) => c.id === id);
-      if (toEdit) {
-        form.setFieldsValue(toEdit);
-        setSelectedPatient(toEdit);
-        setModalType("update");
-        setModalOpen(true);
-      }
-      console.log(toEdit);
+      const toEdit = patients.find((c) => c.id === id) ?? null;
+      setSelectedPatient(toEdit);
+
+      const formValues = mapDataToForm(toEdit);
+      form.resetFields();
+      if (formValues) form.setFieldsValue(formValues);
+
+      setModalType("update");
+      setModalOpen(true);
     },
     [patients, form]
   );
@@ -73,23 +98,28 @@ export default function PatientDataContent() {
         onEdit: handleEdit,
         onDetail: handleDetail,
       }),
-    [deletePatient, handleEdit, handleDetail] // Tambahkan handleDetail di depedency array
+    [deletePatient, handleEdit, handleDetail]
   );
 
+  // Terima payload dari Form (sudah ISO); tinggal set petugas_lapangan_id & kirim
   const handleFinish = useCallback(
     async (values: PatientPayloadCreateModel) => {
-      const payload = {
-        ...values,
-        petugas_lapangan_id: user_id ?? "",
-        birth_date: values.birth_date
-          ? dayjs(values.birth_date).toDate().toISOString()
-          : "",
+      const payload: PatientPayloadCreateModel = {
+        name: values.name,
+        street: values.street,
+        no_whatsapp: values.no_whatsapp,
+        birth_date: values.birth_date, // sudah ISO dari FormPatient
+        gender: values.gender,
+        year_of_diagnosis: values.year_of_diagnosis,
+        petugas_lapangan_id: user_id ?? null, // pastikan null, bukan undefined
       };
+
       if (modalType === "create") {
         await createPatient(payload);
       } else if (selectedPatient?.id) {
-        await updatePatient({ id: selectedPatient.id, payload: payload });
+        await updatePatient({ id: selectedPatient.id, payload });
       }
+
       form.resetFields();
       setSelectedPatient(null);
       setModalOpen(false);
@@ -119,9 +149,11 @@ export default function PatientDataContent() {
     setSelectedPatient(null);
     setModalType("create");
   }, [form]);
+
   return (
     <div>
       <Title level={4}>Data Pasien</Title>
+
       <div style={{ marginBottom: 24 }}>
         <Flex justify="space-between">
           <SearchBar onSearch={handleSearch} />
@@ -132,7 +164,9 @@ export default function PatientDataContent() {
           />
         </Flex>
       </div>
+
       <Table columns={columns} dataSource={filteredPatient} rowKey="id" />
+
       <PatientModal
         open={modalOpen}
         onClose={handleCloseModal}
@@ -141,7 +175,7 @@ export default function PatientDataContent() {
         loadingUpdate={updatePatientLoading}
         form={form}
         type={modalType}
-        initialValues={selectedPatient!}
+        initialValues={mapDataToForm(selectedPatient)}
       />
     </div>
   );

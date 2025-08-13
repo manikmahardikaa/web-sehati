@@ -1,5 +1,6 @@
+// PatientModal.tsx
 import {
-  PatientDataModel,
+  PatientFormModel, // ⬅️ pakai FormModel
   PatientPayloadCreateModel,
 } from "@/app/models/petugas-lapangan/patient";
 import { FormInstance, Modal } from "antd";
@@ -20,9 +21,9 @@ export default function PatientModal({
   handleFinish: (values: PatientPayloadCreateModel) => Promise<void>;
   loadingCreate: boolean;
   loadingUpdate: boolean;
-  form: FormInstance<PatientDataModel>;
+  form: FormInstance<PatientFormModel>; // ⬅️ ubah
   type: "create" | "update";
-  initialValues?: PatientDataModel;
+  initialValues?: PatientFormModel; // ⬅️ ubah
 }) {
   return (
     <Modal
@@ -30,6 +31,7 @@ export default function PatientModal({
       title={type === "create" ? "Tambah Pasien" : "Edit Pasien"}
       footer={null}
       onCancel={onClose}
+      destroyOnClose // optional: biar state bersih tiap tutup
     >
       <FormPatient
         onFinish={handleFinish}

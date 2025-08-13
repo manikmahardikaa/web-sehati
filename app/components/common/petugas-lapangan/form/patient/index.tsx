@@ -1,6 +1,6 @@
+// FormPatient.tsx
 import {
-  PatientDataModel,
-  PatientFormModel,
+  PatientFormModel, // ⬅️ PAKAI INI
   PatientPayloadCreateModel,
 } from "@/app/models/petugas-lapangan/patient";
 import { Button, Form, Input, FormInstance, DatePicker, Select } from "antd";
@@ -18,32 +18,49 @@ export default function FormPatient({
   onFinish: (values: PatientPayloadCreateModel) => Promise<void>;
   loadingCreate: boolean;
   loadingUpdate: boolean;
-  initialValues?: PatientDataModel;
-  form: FormInstance<PatientDataModel>;
+  initialValues?: PatientFormModel; // ⬅️ ubah
+  form: FormInstance<PatientFormModel>; // ⬅️ ubah
   type: "create" | "update";
 }) {
-
   useEffect(() => {
     if (initialValues) {
+      // pastikan birth_date selalu dayjs di form
       const mapped: PatientFormModel = {
         ...initialValues,
         birth_date: initialValues.birth_date
           ? dayjs(initialValues.birth_date)
           : undefined,
       };
-      console.log("mapped initialValues", mapped);
       form.setFieldsValue(mapped);
     } else {
       form.resetFields();
     }
   }, [initialValues, form]);
 
+ const handleSubmit = async (values: PatientFormModel) => {
+
+   const payload = {
+     name: values.name,
+     street: values.street,
+     no_whatsapp: values.no_whatsapp,
+     birth_date: values.birth_date
+       ? dayjs(values.birth_date).toDate().toISOString()
+       : "",
+     gender: values.gender,
+     year_of_diagnosis: values.year_of_diagnosis,
+     petugas_lapangan_id: null,
+   } satisfies PatientPayloadCreateModel;
+
+   await onFinish(payload);
+ };
+
   return (
     <Form
       layout="vertical"
-      onFinish={onFinish}
+      onFinish={handleSubmit} // ⬅️ pakai handler konversi
       form={form}
-      initialValues={initialValues}
+      // ⚠️ JANGAN kirim initialValues di sini, karena berpotensi bukan dayjs
+      // initialValues={initialValues}
     >
       <Form.Item
         name="name"
@@ -85,7 +102,9 @@ export default function FormPatient({
       <Form.Item
         name="year_of_diagnosis"
         label="Tahun Diagnosa"
-        rules={[{ required: true, message: "Wilayah tidak boleh kosong!" }]}
+        rules={[
+          { required: true, message: "Tahun diagnosa tidak boleh kosong!" },
+        ]}
       >
         <Select placeholder="Pilih tahun diagnosa" style={{ width: "100%" }}>
           {Array.from({ length: 10 }, (_, i) => (
