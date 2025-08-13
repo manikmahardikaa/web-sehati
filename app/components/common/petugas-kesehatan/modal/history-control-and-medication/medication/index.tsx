@@ -54,9 +54,9 @@ export default function DownloadReportMedicationModal({
       name: p.name,
       no_whatsapp: p.no_whatsapp,
       year_of_diagnosis: p.year_of_diagnosis,
-      staff_name: p.petugas_lapangan.authority?.name,
-      region: p.petugas_lapangan.authority?.region?.name,
-      sub_region: p.petugas_lapangan.subregion?.name,
+      staff_name: p.petugas_lapangan?.authority?.name,
+      region: p.petugas_lapangan?.authority?.region?.name,
+      sub_region: p.petugas_lapangan?.subregion?.name,
       medicationHistory: (p.medicationHistory || [])
         .filter((c) => {
           const d = dayjs(c.date);
