@@ -5,55 +5,85 @@ import "dayjs/locale/id";
 
 // === COLORS ===
 const BORDER_COLOR = "#b1b1b1";
-const HEADER_BG = "#f8d7e7"; // Soft pink like your sample
+const HEADER_BG = "#f8d7e7";
 const CELL_BG = "#fff";
 
 // === STYLES ===
 const styles = StyleSheet.create({
   page: { padding: 28, fontSize: 11, fontFamily: "Helvetica" },
+
   title: {
     textAlign: "center",
-    fontWeight: "bold",
     fontSize: 15,
     marginBottom: 14,
     letterSpacing: 0.2,
+    fontFamily: "Helvetica-Bold", // gunakan family Bold; fontWeight sering diabaikan
   },
+
   infoRow: { marginBottom: 4, flexDirection: "row" },
-  label: { width: 110, fontWeight: 600 },
-  value: { fontWeight: 400 },
+  label: { width: 110, fontFamily: "Helvetica-Bold" },
+  value: {},
+
+  // TABLE container (pakai flex, tanpa display:"table")
   table: {
-    display: "table",
-    width: "auto",
+    width: "100%",
     marginTop: 18,
+    borderStyle: "solid",
+    borderWidth: 1.2,
+    borderColor: BORDER_COLOR,
     borderRadius: 7,
-    border: `1.2px solid ${BORDER_COLOR}`,
     overflow: "hidden",
   },
-  tableRow: { flexDirection: "row", alignItems: "center", minHeight: 22 },
+
+  // ROW pakai flex
+  tableRow: {
+    flexDirection: "row",
+    alignItems: "stretch",
+    minHeight: 22,
+  },
+
+  // HEADER CELL
   th: {
     backgroundColor: HEADER_BG,
-    border: `1px solid ${BORDER_COLOR}`,
-    fontWeight: "bold",
-    fontSize: 11.5,
     padding: 6,
+    fontSize: 11.5,
     textAlign: "center",
-    minWidth: 70,
+
+    borderRightStyle: "solid",
+    borderRightWidth: 1,
+    borderRightColor: BORDER_COLOR,
+    borderBottomStyle: "solid",
+    borderBottomWidth: 1,
+    borderBottomColor: BORDER_COLOR,
+
+    fontFamily: "Helvetica-Bold",
   },
+
+  // BODY CELL
   td: {
     backgroundColor: CELL_BG,
-    border: `1px solid ${BORDER_COLOR}`,
     padding: 6,
     fontSize: 11,
     textAlign: "center",
-    minWidth: 70,
-    wordBreak: "break-word",
+
+    borderRightStyle: "solid",
+    borderRightWidth: 1,
+    borderRightColor: BORDER_COLOR,
+    borderBottomStyle: "solid",
+    borderBottomWidth: 1,
+    borderBottomColor: BORDER_COLOR,
   },
-  tdXL: { minWidth: 120 },
-  tdNo: { minWidth: 34 },
+
+  // Lebar relatif
+  tdNo: { width: 34 },
+  tdXL: { width: 120 },
+
+  // Hilangkan border kanan di sel terakhir supaya tidak double
+  noRightBorder: { borderRightWidth: 0 },
 });
 
-function getControlStatusLabel(status: boolean) {
-  return status ? "Sudah Melakukan Kontrol" : "Belum Melakukan Kontrol";
+function getMedicationStatusLabel(status: boolean) {
+  return status ? "Sudah Diambil" : "Belum Diambil";
 }
 
 export interface PatientMedicationReport {
@@ -90,7 +120,7 @@ export const PatientMedicationPDFDoc: React.FC<Props> = ({
     .locale("id")
     .format("MMMM");
 
-  // Flatten data for table rows
+  // Flatten data untuk tiap jadwal pengambilan
   const flattenedRows: {
     p: PatientMedicationReport;
     i: number;
@@ -107,8 +137,9 @@ export const PatientMedicationPDFDoc: React.FC<Props> = ({
     <Document>
       <Page size="A4" style={styles.page}>
         <Text style={styles.title}>
-          Laporan Riwayat Kontrol Pasien Bulan {monthName} {year}
+          Laporan Riwayat Pengambilan Obat Pasien Bulan {monthName} {year}
         </Text>
+
         <View style={styles.infoRow}>
           <Text style={styles.label}>Nama Petugas :</Text>
           <Text style={styles.value}>{staffName}</Text>
@@ -121,19 +152,32 @@ export const PatientMedicationPDFDoc: React.FC<Props> = ({
           <Text style={styles.label}>Tanggal Cetak :</Text>
           <Text style={styles.value}>{printDate}</Text>
         </View>
+
+        {/* TABEL */}
         <View style={styles.table}>
+          {/* Header */}
           <View style={styles.tableRow}>
             <Text style={[styles.th, styles.tdNo]}>No</Text>
             <Text style={[styles.th, styles.tdXL]}>Nama Pasien</Text>
             <Text style={styles.th}>No. WhatsApp</Text>
             <Text style={styles.th}>Tahun Diagnosa</Text>
-            <Text style={styles.th}>Jadwal Kontrol</Text>
-            <Text style={styles.th}>Status Kontrol</Text>
-            <Text style={styles.th}>Tanggal Kontrol</Text>
+            <Text style={styles.th}>Jadwal Pengambilan</Text>
+            <Text style={styles.th}>Status Pengambilan</Text>
+            <Text style={[styles.th, styles.noRightBorder]}>
+              Tanggal Diambil
+            </Text>
           </View>
+
+          {/* Body */}
           {flattenedRows.length === 0 ? (
             <View style={styles.tableRow}>
-              <Text style={[styles.td, { flex: 7, textAlign: "left" }]}>
+              <Text
+                style={[
+                  styles.td,
+                  styles.noRightBorder,
+                  { textAlign: "left", width: "100%" },
+                ]}
+              >
                 Tidak ada data pada bulan ini.
               </Text>
             </View>
@@ -148,20 +192,22 @@ export const PatientMedicationPDFDoc: React.FC<Props> = ({
                     <Text style={styles.td}>{p.year_of_diagnosis}</Text>
                   </>
                 ) : (
+                  // baris berikutnya untuk patient yang sama: biarkan 4 kolom pertama kosong
                   <>
-                    <Text style={[styles.td, styles.tdNo]}></Text>
-                    <Text style={[styles.td, styles.tdXL]}></Text>
-                    <Text style={styles.td}></Text>
-                    <Text style={styles.td}></Text>
+                    <Text style={[styles.td, styles.tdNo]}>{""}</Text>
+                    <Text style={[styles.td, styles.tdXL]}>{""}</Text>
+                    <Text style={styles.td}>{""}</Text>
+                    <Text style={styles.td}>{""}</Text>
                   </>
                 )}
+
                 <Text style={styles.td}>
                   {ch.date ? dayjs(ch.date).format("DD-MM-YYYY") : "-"}
                 </Text>
                 <Text style={styles.td}>
-                  {getControlStatusLabel(!!ch.status)}
+                  {getMedicationStatusLabel(!!ch.status)}
                 </Text>
-                <Text style={styles.td}>
+                <Text style={[styles.td, styles.noRightBorder]}>
                   {ch.status && ch.updatedAt
                     ? dayjs(ch.updatedAt).format("DD-MM-YYYY, HH.mm")
                     : "-"}
