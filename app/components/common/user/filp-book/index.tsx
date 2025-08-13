@@ -14,12 +14,9 @@ interface FlipBookProps {
 export default function FlipBook({ url, name }: FlipBookProps) {
   const [numPages, setNumPages] = useState<number>(0);
   const [images, setImages] = useState<string[]>([]);
-
-  // Simpan ref untuk setiap canvas
   const canvasRefs = useRef<(HTMLCanvasElement | null)[]>([]);
 
   useEffect(() => {
-    // clear images saat url berubah
     setImages([]);
     canvasRefs.current = [];
   }, [url]);
@@ -28,15 +25,14 @@ export default function FlipBook({ url, name }: FlipBookProps) {
     setNumPages(numPages);
   }
 
-  // Saat canvas PDF di-render, convert ke image
   const handleRenderSuccess = (pageIndex: number) => {
     const canvas = canvasRefs.current[pageIndex];
     if (canvas) {
       const imgData = canvas.toDataURL("image/png");
       setImages((prev) => {
-        const newArr = [...prev];
-        newArr[pageIndex] = imgData;
-        return newArr;
+        const next = [...prev];
+        next[pageIndex] = imgData;
+        return next;
       });
     }
   };
@@ -62,24 +58,27 @@ export default function FlipBook({ url, name }: FlipBookProps) {
         {name}
       </h2>
 
-      {/* Render semua halaman PDF, hidden, untuk ambil canvas */}
+      {/* Render PDF hidden untuk ambil canvas */}
       <div style={{ display: "none" }}>
         <Document file={url} onLoadSuccess={onDocumentLoadSuccess}>
-          {Array.from(new Array(numPages), (_, index) => (
+          {Array.from({ length: numPages }, (_, index) => (
             <Page
               key={`hidden_page_${index + 1}`}
               pageNumber={index + 1}
               width={600}
               renderAnnotationLayer={false}
               renderTextLayer={false}
-              canvasRef={(ref) => (canvasRefs.current[index] = ref)}
+              // ✅ callback ref harus return void
+              canvasRef={(ref) => {
+                canvasRefs.current[index] = ref;
+              }}
               onRenderSuccess={() => handleRenderSuccess(index)}
             />
           ))}
         </Document>
       </div>
 
-      {/* Render Flipbook */}
+      {/* Flipbook */}
       <HTMLFlipBook
         className="flip-book"
         size="fixed"
@@ -89,19 +88,19 @@ export default function FlipBook({ url, name }: FlipBookProps) {
         maxWidth={1000}
         minHeight={400}
         maxHeight={1536}
-        showCover={true}
+        showCover
         startPage={0}
-        drawShadow={true}
+        drawShadow
         flippingTime={1000}
-        usePortrait={true}
+        usePortrait
         startZIndex={0}
-        autoSize={true}
+        autoSize
         maxShadowOpacity={0.5}
-        mobileScrollSupport={true}
-        clickEventForward={true}
-        useMouseEvents={true}
+        mobileScrollSupport
+        clickEventForward
+        useMouseEvents
         swipeDistance={30}
-        showPageCorners={true}
+        showPageCorners
         disableFlipByClick={false}
         style={{
           background: "white",
@@ -146,6 +145,7 @@ export default function FlipBook({ url, name }: FlipBookProps) {
           )
         )}
       </HTMLFlipBook>
+
       <p
         style={{
           marginTop: 24,
