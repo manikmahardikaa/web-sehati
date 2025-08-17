@@ -10,7 +10,6 @@ export default function PocketBookModal({
   loadingUpdate,
   form,
   type,
-  initialValues,
 }: {
   open: boolean;
   onClose: () => void;
@@ -19,7 +18,6 @@ export default function PocketBookModal({
   loadingUpdate: boolean;
   form: FormInstance<PocketBookDataModel>;
   type: "create" | "update";
-  initialValues?: PocketBookDataModel;
 }) {
   return (
     <Modal
@@ -35,7 +33,6 @@ export default function PocketBookModal({
         loadingUpdate={loadingUpdate}
         form={form}
         type={type}
-        initialValues={initialValues}
       />
     </Modal>
   );

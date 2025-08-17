@@ -4,7 +4,6 @@ import { Button, Form, Input, FormInstance, Select } from "antd";
 
 export default function FormContact({
   form,
-  initialValues,
   onFinish,
   loadingCreate,
   loadingUpdate,
@@ -24,7 +23,6 @@ export default function FormContact({
       layout="vertical"
       onFinish={onFinish}
       form={form}
-      initialValues={initialValues}
     >
       <Form.Item
         name="name"

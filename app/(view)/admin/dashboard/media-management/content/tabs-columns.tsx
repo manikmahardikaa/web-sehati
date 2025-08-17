@@ -69,7 +69,7 @@ export const TabContent = () => {
     onCreateLoading: createLoadingPocketBook,
     onDelete: deletePocketBook,
   } = usePocketBooks({});
-
+ 
   const {
     data: contentCreators = [],
     onCreate: createContentCreator,
@@ -95,7 +95,6 @@ export const TabContent = () => {
 
   const handleFinishFilm = async (values: FilmPayloadCreateModel) => {
     if (modalType === "create") {
-      console.log(values);
       await createFilm(values);
     } else if (selectedType === TypeContent.FILM) {
       await updateFilm({
@@ -185,6 +184,24 @@ export const TabContent = () => {
     contentCreator.name.toLowerCase().includes(searchKeyword)
   );
 
+  const closeModalFilm = () => {
+    filmForm.resetFields();
+    setSelectedFilm(null);
+    setModalOpen(false);
+  };
+
+  const closeModalPocketBook = () => {
+    pocketBookForm.resetFields();
+    setSelectedPocketBook(null);
+    setModalOpen(false);
+  };
+
+  const closeModalContentCreator = () => {
+    contentCreatorForm.resetFields();
+    setSelectedContentCreator(null);
+    setModalOpen(false);
+  };
+
   const tabItems: TabsProps["items"] = [
     {
       key: "1",
@@ -268,34 +285,31 @@ export const TabContent = () => {
           selectedType === TypeContent.FILM ? (
             <FilmModal
               open={modalOpen}
-              onClose={() => setModalOpen(false)}
+              onClose={closeModalFilm}
               type={modalType}
               form={filmForm}
               handleFinish={handleFinishFilm}
               loadingCreate={createLoadingFilm}
               loadingUpdate={updateLoadingFilm}
-              initialValues={selectedFilm!}
             />
           ) : selectedType === TypeContent.POCKET_BOOK ? (
             <PocketBookModal
               open={modalOpen}
-              onClose={() => setModalOpen(false)}
+              onClose={closeModalPocketBook}
               type={modalType}
               form={pocketBookForm}
               handleFinish={handleFinishPocketBook}
               loadingCreate={createLoadingPocketBook}
-              initialValues={selectedPocketBook!}
               loadingUpdate={updateLoadingPocketBook}
             />
           ) : selectedType === TypeContent.CONTENT_CREATOR ? ( //   type={modalType} //   onClose={() => setModalOpen(false)} //   open={modalOpen} // <ContentCreatorModal
             <ContentCreatorModal
               open={modalOpen}
-              onClose={() => setModalOpen(false)}
+              onClose={closeModalContentCreator}
               type={modalType}
               form={contentCreatorForm}
               handleFinish={handleFinishContentCreator}
               loadingCreate={createLoadingContentCreator}
-              initialValues={selectedContentCreator!}
               loadingUpdate={updateLoadingContentCreator}
             />
           ) : null // Sementara, jika belum diimplementasikan

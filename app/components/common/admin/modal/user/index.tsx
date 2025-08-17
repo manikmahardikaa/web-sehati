@@ -13,7 +13,6 @@ export default function UserModal({
   loadingUpdate,
   form,
   type,
-  initialValues,
   process,
 }: {
   open: boolean;
@@ -40,7 +39,6 @@ export default function UserModal({
         form={form}
         type={type}
         process={process}
-        initialValues={initialValues}
       />
     </Modal>
   );

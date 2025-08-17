@@ -13,14 +13,13 @@ export default function MainNotification({
   action,
 }: notificationProps) {
   const generalNotification = {
-    
     success: {
-      message: "Success!",
-      description: `Congratulations! ${entity.toLowerCase()} has been successfully ${action.toLowerCase()}!`,
+      message: "Berhasil!",
+      description: `Selamat! ${entity.toLowerCase()} berhasil di${action.toLowerCase()}!`,
     },
     error: {
-      message: "Error!",
-      description: `Oops! Something went wrong with ${entity.toLowerCase()}. Unable to ${action.toLowerCase()} at this time. Please try again later or contact support if the issue persists`,
+      message: "Terjadi Kesalahan!",
+      description: `Ups! Terjadi kesalahan pada ${entity.toLowerCase()}. Gagal melakukan ${action.toLowerCase()} saat ini. Silakan coba lagi nanti atau hubungi dukungan jika masalah berlanjut.`,
     },
   };
 

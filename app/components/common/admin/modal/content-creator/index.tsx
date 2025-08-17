@@ -10,7 +10,6 @@ export default function ContentCreatorModal({
   loadingUpdate,
   form,
   type,
-  initialValues,
 }: {
   open: boolean;
   onClose: () => void;
@@ -19,7 +18,6 @@ export default function ContentCreatorModal({
   loadingUpdate: boolean;
   form: FormInstance<ContentCreatorDataModel>;
   type: "create" | "update";
-  initialValues?: ContentCreatorDataModel;
 }) {
   return (
     <Modal
@@ -35,7 +33,6 @@ export default function ContentCreatorModal({
         loadingUpdate={loadingUpdate}
         form={form}
         type={type}
-        initialValues={initialValues}
       />
     </Modal>
   );

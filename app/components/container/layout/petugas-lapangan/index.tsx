@@ -2,7 +2,7 @@ import { Layout, Avatar, Dropdown, Menu, Typography, Modal } from "antd";
 import { MainBreadcrumb } from "@/app/components/common/breadcrumb";
 import { SiderPetugasLapangan } from "../../sider/petugas-lapangan";
 import { LogoutOutlined, UserOutlined } from "@ant-design/icons";
-import React from "react";
+import React, { useState } from "react";
 import getInitials from "@/app/utils/username-helper";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -54,29 +54,29 @@ export default function PetugasLapanganLayout({
   userProfilePic?: string;
 }) {
   const router = useRouter();
+  const [collapsed, setCollapsed] = useState(false);
   const menu = (
-      <Menu>
-        <Menu.Item
-          key="logout"
-          icon={<LogoutOutlined />}
-          onClick={showConfirmLogout}
-        >
-          Logout
-        </Menu.Item>
-        <Menu.Item
-          key="profile"
-          icon={<UserOutlined />}
-          onClick={() => router.push("/petugas-kesehatan/dashboard/profile")}
-        >
-          Profile
-        </Menu.Item>
-      </Menu>
-    );
+    <Menu>
+      <Menu.Item
+        key="logout"
+        icon={<LogoutOutlined />}
+        onClick={showConfirmLogout}
+      >
+        Logout
+      </Menu.Item>
+      <Menu.Item
+        key="profile"
+        icon={<UserOutlined />}
+        onClick={() => router.push("/petugas-kesehatan/dashboard/profile")}
+      >
+        Profile
+      </Menu.Item>
+    </Menu>
+  );
   return (
-
-    <Layout style={{ minHeight: "100vh"}}>
-      <SiderPetugasLapangan />
-      <Layout style={innerLayoutStyle}>
+    <Layout style={{ minHeight: "100vh" }}>
+      <SiderPetugasLapangan collapsed={collapsed} onCollapse={setCollapsed} />
+      <Layout style={{ ...innerLayoutStyle, marginLeft: collapsed ? 80 : 300 }}>
         <Header style={{ ...headerStyle, padding: "0 40px 0 0" }}>
           <div style={{ padding: 24, flex: 1 }}>
             <MainBreadcrumb />
@@ -142,7 +142,9 @@ export default function PetugasLapanganLayout({
             </Dropdown>
           </div>
         </Header>
-        <Content style={contentStyle}>{children}</Content>
+        <Content style={contentStyle}>
+          <div style={{ maxWidth: "100%", overflowX: "auto" }}>{children}</div>
+        </Content>
         <Footer style={{ textAlign: "center", background: "#fff" }}>
           {/* Footer content if needed */}
         </Footer>

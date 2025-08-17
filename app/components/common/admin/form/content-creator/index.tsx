@@ -4,7 +4,6 @@ import { FormInstance } from "antd";
 
 export default function FormContentCreator({
   form,
-  initialValues,
   onFinish,
   loadingCreate,
   loadingUpdate,
@@ -13,7 +12,6 @@ export default function FormContentCreator({
   onFinish: (values: ContentCreatorDataModel) => Promise<void>;
   loadingCreate: boolean;
   loadingUpdate: boolean;
-  initialValues?: ContentCreatorDataModel;
   form: FormInstance<ContentCreatorDataModel>;
   type: "create" | "update";
 }) {
@@ -22,10 +20,10 @@ export default function FormContentCreator({
       layout="vertical"
       onFinish={onFinish}
       form={form}
-      initialValues={{
-        ...initialValues,
-        is_published: initialValues?.is_published ?? true,
-      }}
+      // initialValues={{
+      //   ...initialValues,
+      //   is_published: initialValues?.is_published ?? true,
+      // }}
     >
       <Form.Item
         label="Nama Konten Kreator"

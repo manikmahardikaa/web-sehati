@@ -5,6 +5,7 @@ import { LogoutOutlined, UserOutlined } from "@ant-design/icons";
 import getInitials from "@/app/utils/username-helper";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 const { Header, Content, Footer } = Layout;
 
@@ -21,7 +22,8 @@ const headerStyle = {
 const contentStyle = {
   margin: "24px 16px",
   padding: 24,
-  height: "auto",
+  minHeight: "calc(100vh - 64px - 70px)", 
+  overflowY: "auto" as const,
   background: "#fff",
   borderRadius: 8,
   boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
@@ -53,6 +55,7 @@ export default function AdminLayout({
   userProfilePic?: string;
 }) {
   const router = useRouter();
+  const [collapsed, setCollapsed] = useState(false);
   const menu = (
     <Menu>
       <Menu.Item
@@ -73,8 +76,8 @@ export default function AdminLayout({
   );
   return (
     <Layout style={{ height: "100vh" }}>
-      <SiderAdmin />
-      <Layout style={innerLayoutStyle}>
+      <SiderAdmin collapsed={collapsed} onCollapse={setCollapsed} />
+      <Layout style={{ ...innerLayoutStyle, marginLeft: collapsed ? 80 : 300 }}>
         <Header style={headerStyle}>
           {/* Tambahkan elemen header di sini jika perlu */}
           <div style={{ padding: 24 }}>
@@ -141,10 +144,10 @@ export default function AdminLayout({
             </Dropdown>
           </div>
         </Header>
-        <Content style={contentStyle}>{children}</Content>
-        <Footer style={{ textAlign: "center", background: "#fff" }}>
-          {/* Tambahkan isi footer di sini jika perlu */}
-        </Footer>
+        <Content style={contentStyle}>
+          <div style={{ maxWidth: "100%", overflowX: "auto" }}>{children}</div>
+        </Content>
+        <Footer style={{ textAlign: "center", background: "#fff" }}></Footer>
       </Layout>
     </Layout>
   );

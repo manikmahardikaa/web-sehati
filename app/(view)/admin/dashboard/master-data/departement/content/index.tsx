@@ -98,7 +98,6 @@ export default function DepartementContent() {
           }}
           form={form}
           type={modalType}
-          initialValues={selectedDepartement ?? undefined}
           handleFinish={handleFinish}
           loadingCreate={createLoading}
           loadingUpdate={updateLoading}

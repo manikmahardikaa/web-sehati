@@ -25,28 +25,37 @@ export const CREATE_REGION = async (payload: RegionPayloadCreateModel) => {
   });
 };
 
-export const UPDATE_REGION = async (
-  id: string,
-  payload: RegionPayloadUpdateModel
-) => {
-  const { subregions, ...regionData } = payload;
+ export const UPDATE_REGION = async (
+   id: string,
+   payload: RegionPayloadUpdateModel
+ ) => {
+   const { subregions, ...regionData } = payload;
 
-  const result = await db.region.update({
-    where: { id },
-    data: {
-      ...regionData,
-      subregions: {
-        deleteMany: {
-          id: { in: subregions?.upsert?.map((sub) => sub.where.id) ?? [] },
-        },
-        create:
-          subregions?.upsert?.map((sub) => ({ name: sub.create.name })) ?? [],
-      },
-    },
-  });
+   const result = await db.region.update({
+     where: { id },
+     data: {
+       ...regionData,
+       subregions: {
+         deleteMany: subregions?.deleteMany ?? undefined,
+         create:
+           subregions?.upsert
+             ?.filter((sub) => !sub.where.id)
+             .map((sub) => ({
+               name: sub.create.name,
+             })) ?? [],
+         update:
+           subregions?.upsert
+             ?.filter((sub) => sub.where.id)
+             .map((sub) => ({
+               where: sub.where,
+               data: sub.update,
+             })) ?? [],
+       },
+     },
+   });
 
-  return result;
-};
+   return result;
+ };
 
 export const DELETE_REGION = async (id: string) => {
   const result = await db.region.delete({

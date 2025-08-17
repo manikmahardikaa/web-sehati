@@ -14,12 +14,12 @@ export default function ModalConfirm({
   onCancel?: () => void;
 }) {
   const modalConfig = Modal.confirm({
-    title: "Are you sure?",
+    title: "Anda yakin?",
     content: (
       <p>
-        Are you sure you want to proceed with <b>{actions.toUpperCase()}</b> for{" "}
-        <b>{title.toUpperCase()}</b> : <b>{description}</b>? This action cannot
-        be undone. Do you want to continue?
+        Apakah Anda yakin ingin melanjutkan <b>{actions.toUpperCase()}</b> untuk{" "}
+        <b>{title.toUpperCase()}</b>: <b>{description}</b>? Tindakan ini tidak
+        dapat dibatalkan. Apakah Anda ingin tetap melanjutkan?
       </p>
     ),
     onOk: onOk,

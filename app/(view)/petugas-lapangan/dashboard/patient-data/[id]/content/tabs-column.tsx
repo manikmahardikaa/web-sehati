@@ -82,38 +82,35 @@ export default function TabsColumn({ user_id }: { user_id: string }) {
     }
   };
 
-  const handleEditControllHistory = (id: string) => {
-    console.log(id);
-    const toEdit = controllHistory!.find((c) => c.id === id);
-    if (toEdit) {
-      setSelectedTypeHistory("controll-history");
-      formControllHistory.setFieldsValue(toEdit);
-      setSelectedControllHistory(toEdit);
-      setModalType("update");
-      setModalOpen(true);
-      console.log(toEdit);
-    }
-  };
+  // const handleEditControllHistory = (id: string) => {
+  //   console.log(id);
+  //   const toEdit = controllHistory!.find((c) => c.id === id);
+  //   if (toEdit) {
+  //     setSelectedTypeHistory("controll-history");
+  //     formControllHistory.setFieldsValue(toEdit);
+  //     setSelectedControllHistory(toEdit);
+  //     setModalType("update");
+  //     setModalOpen(true);
+  //     console.log(toEdit);
+  //   }
+  // };
 
-  const handleEditMedicalHistory = (id: string) => {
-    console.log(id);
-    const toEdit = medicationHistory!.find((c) => c.id === id);
-    if (toEdit) {
-      setSelectedTypeHistory("medical-history");
-      formMedicalHistory.setFieldsValue(toEdit);
-      setSelectedMedicalHistory(toEdit);
-      setModalType("update");
-      setModalOpen(true);
-      console.log(toEdit);
-    }
-  };
+  // const handleEditMedicalHistory = (id: string) => {
+  //   console.log(id);
+  //   const toEdit = medicationHistory!.find((c) => c.id === id);
+  //   if (toEdit) {
+  //     setSelectedTypeHistory("medical-history");
+  //     formMedicalHistory.setFieldsValue(toEdit);
+  //     setSelectedMedicalHistory(toEdit);
+  //     setModalType("update");
+  //     setModalOpen(true);
+  //     console.log(toEdit);
+  //   }
+  // };
 
   const columnsDrug = MedicalHistoryColumns({
     onDelete: (id) => {
       deleteMedicalHistory(id);
-    },
-    onEdit: (id) => {
-      handleEditMedicalHistory(id);
     },
     onUpdateStatus: (id, currentStatus) => {
       updateMedicalHistoryStatus({ id, status: !currentStatus });
@@ -123,9 +120,6 @@ export default function TabsColumn({ user_id }: { user_id: string }) {
   const columnsControll = ControllHistoryColumns({
     onDelete: (id) => {
       deleteControllHistory(id);
-    },
-    onEdit: (id) => {
-      handleEditControllHistory(id);
     },
     onUpdateStatus: (id, currentStatus) => {
       updateControllHistoryStatus({ id, status: !currentStatus });
@@ -189,7 +183,7 @@ export default function TabsColumn({ user_id }: { user_id: string }) {
       ),
       children: (
         <div style={{ width: "100%" }}>
-          <Flex justify="end">
+          <Flex justify="end" style={{ marginBottom: 16 }}>
             <CustomButton
               title="Tambah Kontrol"
               icon={<PlusOutlined />}
@@ -212,9 +206,9 @@ export default function TabsColumn({ user_id }: { user_id: string }) {
       label: <span style={{ fontWeight: 700 }}>Riwayat Pengambilan Obat</span>,
       children: (
         <div style={{ width: "100%" }}>
-          <Flex justify="end">
+          <Flex justify="end" style={{ marginBottom: 16 }}>
             <CustomButton
-              title="Tambah Kontrol"
+              title="Tambah Pengambilan Obat"
               icon={<PlusOutlined />}
               onClick={() => openModalWithTypeHistory("medical-history")}
             />

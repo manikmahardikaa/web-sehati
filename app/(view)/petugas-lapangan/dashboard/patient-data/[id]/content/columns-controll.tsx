@@ -8,11 +8,9 @@ import "dayjs/locale/id";
 
 export const ControllHistoryColumns = ({
   onDelete,
-  onEdit,
   onUpdateStatus,
 }: {
   onDelete: (id: string) => void;
-  onEdit: (id: string) => void;
   onUpdateStatus: (id: string, currentStatus: boolean) => void;
 }): TableProps<ControllHistoryDataModel>["columns"] => {
   return [
@@ -48,14 +46,11 @@ export const ControllHistoryColumns = ({
       key: "actions",
       render: (record: ControllHistoryDataModel) => (
         <ActionTable
-          title="Psikologi"
+          title="Data"
           description={record.id ? record.id : ""}
           actions="delete"
           type="detail-patient"
           id={record.id}
-          onEdit={() => {
-            onEdit(record.id);
-          }}
           onDelete={() => {
             onDelete(record.id);
           }}

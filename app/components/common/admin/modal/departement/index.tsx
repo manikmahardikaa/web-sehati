@@ -12,7 +12,6 @@ export default function DepartmentModal({
   loadingUpdate,
   form,
   type,
-  initialValues,
 }: {
   open: boolean;
   onClose: () => void;
@@ -21,7 +20,6 @@ export default function DepartmentModal({
   loadingUpdate: boolean;
   form: FormInstance<DepartementDataModel>;
   type: "create" | "update";
-  initialValues?: DepartementDataModel;
 }) {
   return (
     <Modal
@@ -36,7 +34,6 @@ export default function DepartmentModal({
         loadingUpdate={loadingUpdate}
         form={form}
         type={type}
-        initialValues={initialValues}
       />
     </Modal>
   );

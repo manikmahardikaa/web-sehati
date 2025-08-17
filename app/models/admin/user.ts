@@ -7,7 +7,7 @@ export interface UserDataModel extends User {
   region: Region;
   subregion: Subregion;
   authority: {
-    user: User;
+    name: string;
   };
 }
 

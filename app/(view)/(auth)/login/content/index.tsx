@@ -4,15 +4,15 @@ import FormLogin from "@/app/components/common/form/login";
 import { UserFormModel } from "@/app/models/admin/user";
 import { Col, Image, notification, Row, Typography } from "antd";
 import { signIn } from "next-auth/react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 
-const { Title, Text } = Typography;
+const { Title } = Typography;
 
 export default function LoginContent() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+
   const handleLogin = async (values: UserFormModel) => {
     setLoading(true);
     const res = await signIn("credentials", {
@@ -23,14 +23,10 @@ export default function LoginContent() {
     setLoading(false);
 
     if (res?.ok) {
-      notification.success({
-        message: "Login berhasil!",
-      });
-
+      notification.success({ message: "Login berhasil!" });
       const sessionRes = await fetch("/api/auth/session");
       const session = await sessionRes.json();
 
-      console.log(session);
       switch (session.user.role) {
         case "ADMIN":
           router.push("/admin/dashboard/home");
@@ -48,28 +44,32 @@ export default function LoginContent() {
           router.push("/dashboard");
       }
     } else {
-      notification.error({
-        message: "Login gagal!",
-      });
+      notification.error({ message: "Login gagal!" });
     }
   };
 
   return (
-    <div style={{ height: "100vh", background: "#fff" }}>
-      <Row style={{ height: "100%" }}>
-        {/* Kiri - Ilustrasi */}
+    <div
+      style={{
+        minHeight: "100vh",
+        overflow: "hidden",
+        background: "#fff",
+      }}
+    >
+      <Row style={{ minHeight: "100vh" }} gutter={0}>
         <Col
-          span={12}
+          xs={0}
+          md={12}
           style={{
             background: "linear-gradient(135deg, #D41C1C, #B31818, #B31818)",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            padding: 50,
+            padding: 40,
           }}
         >
           <Image
-            src="/assets/images/illustration.png" // ganti sesuai lokasi gambar Anda
+            src="/assets/images/illustration.png"
             alt="Illustration"
             preview={false}
             width={400}
@@ -79,22 +79,25 @@ export default function LoginContent() {
 
         {/* Kanan - Form Login */}
         <Col
-          span={12}
+          xs={24}
+          md={12}
           style={{
-            padding: "80px 60px",
+            padding: "40px 24px",
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
+            alignItems: "center",
+            background: "#fff",
           }}
         >
-          <div style={{ maxWidth: 400, width: "100%", margin: "0 auto" }}>
-            <div style={{ marginBottom: 30, textAlign: "center" }}>
+          <div style={{ maxWidth: 400, width: "100%" }}>
+            <div style={{ marginBottom: 24, textAlign: "center" }}>
               <Image
                 src="/assets/images/logo.png"
                 alt="SEHATI"
                 preview={false}
                 width="100%"
-                height="100%"
+                height="auto"
               />
             </div>
 
@@ -102,13 +105,6 @@ export default function LoginContent() {
               Masuk ke Akun Anda
             </Title>
             <FormLogin onFinish={handleLogin} loading={loading} />
-
-            <Text>
-              Belum memiliki akun?{" "}
-              <Link href="/register" style={{ color: "#C30010" }}>
-                Daftar akun baru.
-              </Link>
-            </Text>
           </div>
         </Col>
       </Row>

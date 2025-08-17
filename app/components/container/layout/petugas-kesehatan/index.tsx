@@ -5,6 +5,7 @@ import { LogoutOutlined, UserOutlined } from "@ant-design/icons";
 import getInitials from "@/app/utils/username-helper";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 const { Header, Content, Footer } = Layout;
 
@@ -53,6 +54,7 @@ export default function PetugasKesehatanLayout({
   userProfilePic?: string;
 }) {
   const router = useRouter();
+   const [collapsed, setCollapsed] = useState(false);
   const menu = (
     <Menu>
       <Menu.Item
@@ -73,8 +75,8 @@ export default function PetugasKesehatanLayout({
   );
   return (
     <Layout style={{ minHeight: "100vh" }}>
-      <SiderPetugasKesehatan />
-      <Layout style={innerLayoutStyle}>
+      <SiderPetugasKesehatan collapsed={collapsed} onCollapse={setCollapsed} />
+      <Layout style={{ ...innerLayoutStyle, marginLeft: collapsed ? 80 : 300 }}>
         <Header style={headerStyle}>
           {/* Tambahkan elemen header di sini jika perlu */}
           <div style={{ padding: 24 }}>
@@ -141,7 +143,9 @@ export default function PetugasKesehatanLayout({
             </Dropdown>
           </div>
         </Header>
-        <Content style={contentStyle}>{children}</Content>
+        <Content style={contentStyle}>
+          <div style={{ maxWidth: "100%", overflowX: "auto" }}>{children}</div>
+        </Content>
         <Footer style={{ textAlign: "center", background: "#fff" }}>
           {/* Tambahkan isi footer di sini jika perlu */}
         </Footer>

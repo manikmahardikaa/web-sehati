@@ -11,7 +11,6 @@ import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 
 export default function FormRegion({
   form,
-  initialValues,
   onFinish,
   loadingCreate,
   loadingUpdate,
@@ -20,7 +19,6 @@ export default function FormRegion({
   onFinish: (values: RegionFormModel) => Promise<void>;
   loadingCreate: boolean;
   loadingUpdate: boolean;
-  initialValues?: RegionFormModel;
   form: FormInstance<RegionDataModel>;
   type: "create" | "update";
 }) {
@@ -29,7 +27,7 @@ export default function FormRegion({
       layout="vertical"
       onFinish={onFinish}
       form={form}
-      initialValues={initialValues}
+      // initialValues={initialValues}
     >
       <Form.Item
         name="name"

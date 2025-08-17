@@ -18,7 +18,6 @@ interface FormFilmProps {
 
 export default function MetadataStep({
   form,
-  initialValues,
   onFinish,
 }: FormFilmProps) {
   return (
@@ -26,7 +25,6 @@ export default function MetadataStep({
       form={form}
       layout="vertical"
       onFinish={onFinish}
-      initialValues={initialValues}
     >
       {/* step indicator */}
       <Steps current={0} style={{ marginBottom: 32 }}>

@@ -3,7 +3,6 @@ import { Button, Form, Input, FormInstance } from "antd";
 
 export default function FormDepartement({
   form,
-  initialValues,
   onFinish,
   loadingCreate,
   loadingUpdate,
@@ -12,7 +11,6 @@ export default function FormDepartement({
   onFinish: (values: DepartementDataModel) => Promise<void>;
   loadingCreate: boolean;
   loadingUpdate: boolean;
-  initialValues?: DepartementDataModel;
   form: FormInstance<DepartementDataModel>;
   type: "create" | "update";
 }) {
@@ -21,7 +19,6 @@ export default function FormDepartement({
       layout="vertical"
       onFinish={onFinish}
       form={form}
-      initialValues={initialValues}
     >
       <Form.Item
         name="name"

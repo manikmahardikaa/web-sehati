@@ -12,7 +12,6 @@ export default function RegionModal({
   loadingUpdate,
   form,
   type,
-  initialValues,
 }: {
   open: boolean;
   onClose: () => void;
@@ -21,7 +20,6 @@ export default function RegionModal({
   loadingUpdate: boolean;
   form: FormInstance<RegionDataModel>;
   type: "create" | "update";
-  initialValues?: RegionFormModel;
 }) {
   return (
     <Modal
@@ -36,7 +34,6 @@ export default function RegionModal({
         loadingUpdate={loadingUpdate}
         form={form}
         type={type}
-        initialValues={initialValues}
       />
     </Modal>
   );

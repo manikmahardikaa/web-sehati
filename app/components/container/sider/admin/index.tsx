@@ -4,8 +4,13 @@ import Sider from "antd/es/layout/Sider";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
-export const SiderAdmin = () => {
-  const [collapsed, setCollapsed] = useState<boolean>(false);
+export const SiderAdmin = ({
+  collapsed,
+  onCollapse,
+}: {
+  collapsed: boolean;
+  onCollapse: (value: boolean) => void;
+}) => {
   const sidebarMenu = SidebarMenuAdmin();
   const pathname = usePathname();
   const [selectActiveKey, setActiveKey] = useState<string>("");
@@ -22,25 +27,31 @@ export const SiderAdmin = () => {
     <Sider
       collapsible
       collapsed={collapsed}
-      onCollapse={setCollapsed}
-      // style={{
-      //   backgroundColor: "#fff", // dark sidebar
-      // }}
+      onCollapse={onCollapse}
       width={300}
+      style={{
+        height: "100vh",
+        position: "fixed",
+        left: 0,
+        top: 0,
+        bottom: 0,
+        zIndex: 1000,
+        overflow: "auto",
+        backgroundColor: "#fff",
+        boxShadow: "2px 0 8px rgba(0, 0, 0, 0.1)",
+      }}
     >
       {/* Logo Area */}
       <div
         style={{
-          height: collapsed ? 30 : 70, 
+          height: 70,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           backgroundColor: "rgba(255, 255, 255, 0.05)",
-          borderRadius: 8,
           margin: 16,
           cursor: "pointer",
           transition: "all 0.3s ease",
-          padding: 0,
         }}
       >
         <Image
@@ -51,12 +62,11 @@ export const SiderAdmin = () => {
           }
           alt="Logo"
           preview={false}
-          width={collapsed ? 80 : 120}
-          height={collapsed ? 80 : 120}
+          width={collapsed ? 50 : 120}
+          height={50}
           style={{
             objectFit: "contain",
             transition: "all 0.3s ease",
-            // hapus margin/marginLeft
             display: "block",
           }}
         />

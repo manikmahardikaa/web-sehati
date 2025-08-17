@@ -10,7 +10,6 @@ import ReactQuill from "react-quill";
 
 export default function FormNews({
   form,
-  initialValues,
   onFinish,
   loadingCreate,
   loadingUpdate,
@@ -19,7 +18,6 @@ export default function FormNews({
   onFinish: (values: NewsPayloadCreateModel) => Promise<void>;
   loadingCreate: boolean;
   loadingUpdate: boolean;
-  initialValues?: NewsDataModel;
   form: FormInstance<NewsDataModel>;
   type: "create" | "update";
 }) {
@@ -29,7 +27,6 @@ export default function FormNews({
       layout="vertical"
       onFinish={onFinish}
       form={form}
-      initialValues={initialValues}
     >
       <Form.Item
         name="name"

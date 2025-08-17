@@ -35,25 +35,52 @@ export default function ActionTable({
     <div>
       <Flex gap={8}>
         {type === "detail-patient" && (
-          <Tooltip title="Detail">
-            <span
-              style={{
-                backgroundColor: "#1677ff",
-                padding: "8px",
-                borderRadius: "8px",
-                display: "inline-flex",
-                alignItems: "center",
-                justifyContent: "center",
-                color: "#fff",
-                cursor: "pointer",
-              }}
-              onClick={onUpdateStatus}
-            >
-              <CheckCircleFilled />
-            </span>
-          </Tooltip>
+          <>
+            <Tooltip title="Status">
+              <span
+                style={{
+                  backgroundColor: "#1677ff",
+                  padding: "8px",
+                  borderRadius: "8px",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "#fff",
+                  cursor: "pointer",
+                }}
+                onClick={onUpdateStatus}
+              >
+                <CheckCircleFilled />
+              </span>
+            </Tooltip>
+            <Tooltip title="Delete">
+              <span
+                style={{
+                  backgroundColor: "#d93025",
+                  padding: "8px",
+                  borderRadius: "8px",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "#fff",
+                  cursor: "pointer",
+                }}
+              >
+                <DeleteFilled
+                  onClick={() => {
+                    ModalConfirm({
+                      title: title,
+                      description: description,
+                      actions: actions,
+                      onOk: () => onDelete && onDelete(id),
+                    });
+                  }}
+                />
+              </span>
+            </Tooltip>
+          </>
         )}
-        {type !== "detail-patient-program-wilayah" && type !== "report" && (
+        {type !== "detail-patient-program-wilayah" && type !== "report" && type !== "detail-patient" && (
           <>
             <Tooltip title="Edit">
               <span

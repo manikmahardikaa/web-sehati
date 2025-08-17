@@ -7,11 +7,10 @@ import "dayjs/locale/id";
 
 export const MedicalHistoryColumns = ({
   onDelete,
-  onEdit,
+
   onUpdateStatus,
 }: {
   onDelete: (id: string) => void;
-  onEdit: (id: string) => void;
   onUpdateStatus: (id: string, currentStatus: boolean) => void;
 }): TableProps<MedicationHistoryDataModel>["columns"] => {
   return [
@@ -52,9 +51,6 @@ export const MedicalHistoryColumns = ({
           actions="delete"
           type="detail-patient"
           id={record.id}
-          onEdit={() => {
-            onEdit(record.id);
-          }}
           onDelete={() => {
             onDelete(record.id);
           }}

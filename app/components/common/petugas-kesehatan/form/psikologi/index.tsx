@@ -7,7 +7,6 @@ import { Button, Form, Input, FormInstance, Select } from "antd";
 
 export default function FormPsikologi({
   form,
-  initialValues,
   onFinish,
   loadingCreate,
   loadingUpdate,
@@ -25,7 +24,6 @@ export default function FormPsikologi({
       layout="vertical"
       onFinish={onFinish}
       form={form}
-      initialValues={initialValues}
     >
       <Form.Item name="image_url" label="Pilih Foto">
         <SupaImageUploader

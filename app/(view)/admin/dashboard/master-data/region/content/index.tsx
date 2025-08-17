@@ -51,9 +51,17 @@ export default function RegionManagementContent() {
     if (modalType === "create") {
       await createRegion(values);
     } else if (selectedRegion?.id) {
+      const existingIds = selectedRegion.subregions?.map((s) => s.id) ?? [];
+      const updatedIds =
+        values.subregions?.map((s) => s.id).filter(Boolean) ?? [];
+
+      const deletedIds = existingIds.filter((id) => !updatedIds.includes(id));
+
       const payload: RegionPayloadUpdateModel = {
         name: values.name,
         subregions: {
+          deleteMany:
+            deletedIds.length > 0 ? { id: { in: deletedIds } } : undefined,
           upsert: values.subregions?.map((subregion) => ({
             where: { id: subregion.id ?? "" },
             update: { name: subregion.name },
@@ -61,8 +69,10 @@ export default function RegionManagementContent() {
           })),
         },
       };
+
       await updateRegion({ id: selectedRegion.id, payload });
     }
+
     form.resetFields();
     setSelectedRegion(null);
     setModalOpen(false);
@@ -109,7 +119,6 @@ export default function RegionManagementContent() {
           }}
           form={form}
           type={modalType}
-          initialValues={selectedRegion ?? undefined}
           handleFinish={handleFinish}
           loadingCreate={createLoading}
           loadingUpdate={updateLoading}

@@ -24,14 +24,12 @@ interface SurveyQuestion {
 
 export default function FilmStepper({
   form,
-  initialValues,
   onFinish,
   loadingCreate,
   loadingUpdate,
   type,
 }: {
   form: FormInstance<FilmDataModel>;
-  initialValues?: FilmDataModel;
   onFinish: (values: FilmPayloadCreateModel) => Promise<void>;
   loadingCreate: boolean;
   loadingUpdate: boolean;
@@ -40,6 +38,8 @@ export default function FilmStepper({
   const [current, setCurrent] = useState(0);
   const [filmData, setFilmData] = useState<FilmDataModel | null>(null);
   const [surveyQuestions, setSurveyQuestions] = useState<SurveyQuestion[]>([]);
+
+  
 
   return (
     <>
@@ -50,7 +50,6 @@ export default function FilmStepper({
             setCurrent(1);
           }}
           form={form}
-          initialValues={initialValues}
         />
       )}
       {current === 1 && filmData && (

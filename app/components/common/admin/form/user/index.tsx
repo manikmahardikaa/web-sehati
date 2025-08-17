@@ -7,7 +7,6 @@ import { useState } from "react";
 
 export default function FormUser({
   form,
-  initialValues,
   onFinish,
   loadingCreate,
   loadingUpdate,
@@ -17,7 +16,6 @@ export default function FormUser({
   onFinish: (values: UserFormModel) => Promise<void>;
   loadingCreate: boolean;
   loadingUpdate: boolean;
-  initialValues?: UserFormModel;
   form: FormInstance<UserDataModel>;
   type: "create" | "update";
   process?: Role;
@@ -42,7 +40,6 @@ export default function FormUser({
       layout="vertical"
       onFinish={onFinish}
       form={form}
-      initialValues={initialValues}
     >
       <Form.Item
         name="name"

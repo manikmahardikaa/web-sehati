@@ -4,8 +4,13 @@ import Sider from "antd/es/layout/Sider";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
-export const SiderPetugasKesehatan = () => {
-  const [collapsed, setCollapsed] = useState<boolean>(false);
+export const SiderPetugasKesehatan = ({
+  collapsed,
+  onCollapse,
+}: {
+  collapsed: boolean;
+  onCollapse: (value: boolean) => void;
+}) => {
   const sidebarMenu = SidebarMenuPetugasKesehatan();
   const pathname = usePathname();
   const [selectActiveKey, setActiveKey] = useState<string>("");
@@ -22,11 +27,22 @@ export const SiderPetugasKesehatan = () => {
     <Sider
       collapsible
       collapsed={collapsed}
-      onCollapse={setCollapsed}
+      onCollapse={onCollapse}
       // style={{
       //   backgroundColor: "#fff", // dark sidebar
       // }}
       width={300}
+      style={{
+        height: "100vh",
+        position: "fixed",
+        left: 0,
+        top: 0,
+        bottom: 0,
+        zIndex: 1000,
+        overflow: "auto",
+        backgroundColor: "#fff",
+        boxShadow: "2px 0 8px rgba(0, 0, 0, 0.1)",
+      }}
     >
       {/* Logo Area */}
       <div

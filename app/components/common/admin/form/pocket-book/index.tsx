@@ -1,16 +1,14 @@
 import {
   PocketBookDataModel,
-  PocketBookFormModel,
 } from "@/app/models/admin/pocket-book";
 import SupaPdfUploader from "@/app/utils/pdf-uploader";
 import { Form, Input, Button, Checkbox } from "antd";
 import { FormInstance } from "antd";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import ReactQuill from "react-quill";
 
 export default function FormPocketBook({
   form,
-  initialValues,
   onFinish,
   loadingCreate,
   loadingUpdate,
@@ -19,27 +17,17 @@ export default function FormPocketBook({
   onFinish: (values: PocketBookDataModel) => Promise<void>;
   loadingCreate: boolean;
   loadingUpdate: boolean;
-  initialValues?: PocketBookFormModel;
   form: FormInstance<PocketBookDataModel>;
   type: "create" | "update";
 }) {
   const [description, setDescription] = useState("");
 
-  useEffect(() => {
-    if (initialValues?.description) {
-      setDescription(initialValues.description);
-    }
-  }, [initialValues]);
 
   return (
     <Form
       layout="vertical"
       onFinish={onFinish}
       form={form}
-      initialValues={{
-        ...initialValues,
-        is_published: initialValues?.is_published ?? true,
-      }}
     >
       <Form.Item
         label="Judul Buku Saku"
