@@ -13,7 +13,6 @@ export default function NewsModal({
   loadingUpdate,
   form,
   type,
-  initialValues,
 }: {
   open: boolean;
   onClose: () => void;
@@ -37,7 +36,6 @@ export default function NewsModal({
         loadingUpdate={loadingUpdate}
         form={form}
         type={type}
-        initialValues={initialValues}
       />
     </Modal>
   );
