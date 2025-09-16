@@ -6,7 +6,7 @@ export default function CustomCard({
   titleButton,
   onClick,
 }: {
-  title: string;
+  title: React.ReactNode;
   icon: React.ReactNode;
   titleButton: string;
   onClick: () => void;

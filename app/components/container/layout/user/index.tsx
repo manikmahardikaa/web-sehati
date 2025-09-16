@@ -1,5 +1,5 @@
 import { Layout } from "antd";
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 import { SiderUser } from "../../sider/user";
 import { Content, Header } from "antd/es/layout/layout";
 import { MainBreadcrumb } from "@/app/components/common/breadcrumb";
@@ -31,19 +31,24 @@ export default function UserLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const [collapsed, setCollapsed] = useState(false);
   return (
     <Fragment>
       <Layout style={{ minHeight: "100vh" }}>
-        <SiderUser />
-        <Layout style={innerLayoutStyle}>
+        <SiderUser collapsed={collapsed} onCollapse={setCollapsed} />
+        <Layout
+          style={{ ...innerLayoutStyle, marginLeft: collapsed ? 80 : 300 }}
+        >
           <Header style={headerStyle}>
             {/* Tambahkan elemen header di sini jika perlu */}
-            <div style={{ padding: 24, flex: 1 }}>
+            <div style={{ padding: 24 }}>
               <MainBreadcrumb />
             </div>
           </Header>
           <Content style={contentStyle}>
-            <div>{children}</div>
+            <div style={{ maxWidth: "100%", overflowX: "auto" }}>
+              {children}
+            </div>
           </Content>
         </Layout>
       </Layout>

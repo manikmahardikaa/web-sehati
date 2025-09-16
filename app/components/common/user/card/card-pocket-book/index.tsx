@@ -73,24 +73,6 @@ export default function CardPocketBook({
             whiteSpace: "normal",
           }}
         >
-          {/* Ambil 70 karakter pertama, tambahkan "..." */}
-          {data.description?.replace(/<[^>]+>/g, "").slice(0, 70)}...
-          <span
-            style={{
-              color: "#d41c1c",
-              fontWeight: 600,
-              fontStyle: "italic",
-              marginLeft: 4,
-              cursor: "pointer",
-              fontSize: 14,
-            }}
-            onClick={(e) => {
-              e.stopPropagation();
-              onClick(data.id);
-            }}
-          >
-            baca selengkapnya
-          </span>
         </Text>
       </div>
     </Card>

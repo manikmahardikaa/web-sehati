@@ -1,14 +1,18 @@
 import { SidebarMenuUser } from "@/app/data/user/sidebar-data";
 import { Image, Menu } from "antd";
 import Sider from "antd/es/layout/Sider";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname,} from "next/navigation";
 import { useEffect, useState } from "react";
 
-export const SiderUser = () => {
-  const [collapsed, setCollapsed] = useState<boolean>(false);
+export const SiderUser = ({
+  collapsed,
+  onCollapse,
+}: {
+  collapsed: boolean;
+  onCollapse: (value: boolean) => void;
+}) => {
   const sidebarMenu = SidebarMenuUser();
   const pathname = usePathname();
-  const router = useRouter();
   const [selectActiveKey, setActiveKey] = useState<string>("");
 
   useEffect(() => {
@@ -23,39 +27,50 @@ export const SiderUser = () => {
     <Sider
       collapsible
       collapsed={collapsed}
-      onCollapse={setCollapsed}
+      onCollapse={onCollapse}
       // style={{
       //   backgroundColor: "#001529", // dark sidebar
       // }}
       width={300}
+      style={{
+        height: "100vh",
+        position: "fixed",
+        left: 0,
+        top: 0,
+        bottom: 0,
+        zIndex: 1000,
+        overflow: "auto",
+        backgroundColor: "#fff",
+        boxShadow: "2px 0 8px rgba(0, 0, 0, 0.1)",
+      }}
     >
       {/* Logo Area */}
       <div
         style={{
-          height: 64,
-          margin: 16,
+          height: 70,
           display: "flex",
           alignItems: "center",
-          justifyContent: collapsed ? "center" : "flex-start",
-          cursor: "pointer",
+          justifyContent: "center",
           backgroundColor: "rgba(255, 255, 255, 0.05)",
-          borderRadius: 8,
-          padding: 8,
+          margin: 16,
+          cursor: "pointer",
           transition: "all 0.3s ease",
         }}
-        onClick={() => router.push("/")}
       >
         <Image
-          src="/assets/images/logo.png"
+          src={
+            collapsed
+              ? "/assets/images/logo-collapsed.png"
+              : "/assets/images/logo.png"
+          }
           alt="Logo"
           preview={false}
-          width={collapsed ? 32 : "auto"}
-          height={collapsed ? 32 : "auto"}
+          width={collapsed ? 50 : 120}
+          height={50}
           style={{
-            height: 32,
-            transition: "all 0.3s ease",
             objectFit: "contain",
-            marginLeft: collapsed ? 0 : 8,
+            transition: "all 0.3s ease",
+            display: "block",
           }}
         />
       </div>

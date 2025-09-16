@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Col, Flex, Row, Tabs, TabsProps } from "antd";
+import { Col, Empty, Flex, Row, Tabs, TabsProps } from "antd";
 
 import CardFilm from "@/app/components/common/user/card/card-film";
 import { useFilms } from "@/app/hooks/admin/film";
@@ -23,19 +23,30 @@ export default function TabContent() {
   const tabItems: TabsProps["items"] = [
     {
       key: "1",
-      label: "Film Pendek ",
+      label: "Film Pendek",
       children: (
         <>
-          <Flex justify="end">
-            <SearchBar onSearch={() => {}} />
+          <Flex justify="end" style={{ marginBottom: 16 }}>
+            <SearchBar
+              onSearch={(q) => {
+                /* optional: filter client-side */
+              }}
+            />
           </Flex>
-          <Row gutter={[24, 24]} wrap>
-            {filmData?.map((item) => (
-              <Col key={item.id}>
-                <CardFilm data={item} onClick={(id) => {}} />
-              </Col>
-            ))}
-          </Row>
+
+          {filmData?.length === 0 ? (
+            <Empty description="Belum ada film" />
+          ) : (
+            <Row gutter={[24, 24]} wrap>
+              {filmData?.map((item) => (
+                <Col key={item.id} xs={12} sm={8} md={6} lg={6} xl={4}>
+                  <CardFilm
+                    data={item}
+                  />
+                </Col>
+              ))}
+            </Row>
+          )}
         </>
       ),
     },

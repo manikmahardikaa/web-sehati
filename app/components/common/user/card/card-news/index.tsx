@@ -1,60 +1,104 @@
-import { NewsDataModel } from "@/app/models/petugas-kesehatan/news";
-import stripHtml from "@/app/utils/strip-html";
+import { memo, useMemo } from "react";
 import { Card, Image, Typography } from "antd";
 import dayjs from "dayjs";
+import stripHtml from "@/app/utils/strip-html";
+import type { NewsDataModel } from "@/app/models/petugas-kesehatan/news";
 
 const { Title, Text } = Typography;
 
-export default function CardNews({ news }: { news: NewsDataModel }) {
+type Props = {
+  news: NewsDataModel;
+  onOpen?: (newsId: string) => void;
+  maxChars?: number; // optional: control excerpt length
+};
+
+function CardNews({ news, onOpen, maxChars = 120 }: Props) {
+  const excerpt = useMemo(() => {
+    const plain = stripHtml(news?.body ?? "");
+    return plain.length > maxChars ? `${plain.slice(0, maxChars)}…` : plain;
+  }, [news?.body, maxChars]);
+
+  const handleOpen = () => onOpen?.(news.id);
+  const handleKey = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      handleOpen();
+    }
+  };
+
+  const createdAt = news?.createdAt
+    ? dayjs(news.createdAt).format("DD MMMM YYYY")
+    : "";
+
   return (
     <Card
       style={{
         borderRadius: 12,
-        boxShadow: "0 2px 18px 0 rgba(0,0,0,0.07)",
-        padding: 0,
+        boxShadow: "0 2px 18px rgba(0,0,0,0.07)",
         border: "none",
+        overflow: "hidden",
       }}
       bodyStyle={{ padding: 0 }}
+      hoverable
     >
       {/* Thumbnail */}
       <Image
-        src={news.thumbnail_url}
-        alt={news.name}
-        style={{
-          width: "100%",
-          height: 220,
-          objectFit: "cover",
-          borderTopLeftRadius: 12,
-          borderTopRightRadius: 12,
-        }}
+        src={news?.thumbnail_url || "/images/placeholder-news.jpg"}
+        alt={news?.name || "Thumbnail"}
+        height={220}
+        width="100%"
+        style={{ objectFit: "cover" }}
+        preview={false}
+        fallback="/images/placeholder-news.jpg"
       />
-      <div style={{ padding: "22px 24px 20px 24px" }}>
-        {/* Judul */}
-        <Title level={4} style={{ margin: 0, fontWeight: 700, fontSize: 20 }}>
-          {news.name}
-        </Title>
-        {/* Tanggal */}
-        <Text
-          type="secondary"
-          style={{ display: "block", fontSize: 14, margin: "6px 0 9px 0" }}
+
+      <div style={{ padding: "18px 20px 20px" }}>
+        {/* Judul (clickable & keyboard-accessible) */}
+        <Title
+          level={4}
+          style={{
+            margin: 0,
+            fontWeight: 700,
+            fontSize: 20,
+            cursor: "pointer",
+          }}
+          onClick={handleOpen}
+          role="button"
+          tabIndex={0}
+          onKeyDown={handleKey}
         >
-          {dayjs(news.createdAt).format("DD MMMM YYYY")}
-        </Text>
+          {news?.name ?? "-"}
+        </Title>
+
+        {/* Tanggal */}
+        {createdAt && (
+          <Text type="secondary" style={{ display: "block", marginTop: 6 }}>
+            {createdAt}
+          </Text>
+        )}
+
         {/* Ringkasan */}
         <div
           style={{
+            marginTop: 10,
             fontSize: 15,
             color: "#262626",
-            marginBottom: 4,
+            lineHeight: 1.55,
             minHeight: 44,
-            lineHeight: 1.5,
           }}
         >
-          {stripHtml(news.body).slice(0, 96)}...
+          {excerpt}
         </div>
-        {/* Baca Selengkapnya */}
+
+        {/* Baca Selengkapnya (clickable) */}
         <span
+          onClick={handleOpen}
+          onKeyDown={handleKey}
+          role="button"
+          tabIndex={0}
           style={{
+            display: "inline-block",
+            marginTop: 6,
             color: "#d41c1c",
             fontWeight: 600,
             fontSize: 15,
@@ -62,12 +106,11 @@ export default function CardNews({ news }: { news: NewsDataModel }) {
             fontStyle: "italic",
           }}
         >
-          baca selengkapnya
+          Baca selengkapnya
         </span>
       </div>
     </Card>
   );
 }
 
-// Helper untuk strip html tag dari body berita
-
+export default memo(CardNews);

@@ -9,7 +9,6 @@ import { useState } from "react";
 
 const { Header, Content, Footer } = Layout;
 
-// (Optional) Extract styles for easier maintenance
 const headerStyle = {
   background: "#fff",
   padding: 0,

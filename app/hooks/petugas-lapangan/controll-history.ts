@@ -96,8 +96,6 @@ export const useControllHistory = ({ id }: { id: string }) => {
     useMutation({
       mutationFn: async ({ id, status }: { id: string; status: boolean }) => {
         return axios.patch(`${baseUrl}/${id}`, { status });
-        // Kalau endpoint khusus status:
-        // return axios.patch(`${baseUrl}/${id}/status`, { status });
       },
       onSuccess: (_, variables) => {
         queryClient.invalidateQueries({ queryKey: [queryKey] });
