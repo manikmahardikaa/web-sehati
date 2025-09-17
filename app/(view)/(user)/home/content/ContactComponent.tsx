@@ -79,8 +79,8 @@ const WaCard: React.FC<WaContact> = ({
 
 /* ---------- Main Component ---------- */
 const ContactInfo: React.FC<ContactInfoProps> = ({
-  leftTitle = "Kontak Kader Sehati",
-  rightTitle = "Kontak Pemegang Program Wilayah",
+  leftTitle, 
+  rightTitle, 
   leftContacts,
   rightContacts,
 }) => {

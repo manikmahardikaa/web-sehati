@@ -12,38 +12,36 @@ import VideoCarousel from "@/app/components/common/user/carousel-video";
 
 import { useFilms } from "@/app/hooks/admin/film";
 import { useNewies } from "@/app/hooks/petugas-kesehatan/news";
-import { useContacts } from "@/app/hooks/admin/contact";
-import { ContactDataModel } from "@/app/models/admin/contact";
-import ContactInfo from "./ContactComponent";
+import ContactInfoContainer from "./ContactContainerComponent";
 
 const { Title, Text } = Typography;
 
-type ContactResponse =
-  | { success?: boolean; message?: string; result?: ContactDataModel[] }
-  | ContactDataModel[]
-  | undefined
-  | null;
+// type ContactResponse =
+//   | { success?: boolean; message?: string; result?: ContactDataModel[] }
+//   | ContactDataModel[]
+//   | undefined
+//   | null;
 
-const DEPT_LEFT = "Kader Sehati";
-const DEPT_RIGHT = "Petugas Lapangan";
+// const DEPT_LEFT = "Kader Sehati";
+// const DEPT_RIGHT = "Petugas Lapangan";
 
-function toWaLink(raw?: string): string {
-  if (!raw) return "";
-  const digits = raw.replace(/\D/g, "");
-  const normalized = digits.startsWith("0") ? `62${digits.slice(1)}` : digits;
-  return `https://wa.me/${normalized}`;
-}
-function extractContacts(data: ContactResponse): ContactDataModel[] {
-  if (!data) return [];
-  if (Array.isArray(data)) return data;
-  if (Array.isArray(data.result)) return data.result;
-  return [];
-}
+// function toWaLink(raw?: string): string {
+//   if (!raw) return "";
+//   const digits = raw.replace(/\D/g, "");
+//   const normalized = digits.startsWith("0") ? `62${digits.slice(1)}` : digits;
+//   return `https://wa.me/${normalized}`;
+// }
+// function extractContacts(data: ContactResponse): ContactDataModel[] {
+//   if (!data) return [];
+//   if (Array.isArray(data)) return data;
+//   if (Array.isArray(data.result)) return data.result;
+//   return [];
+// }
 
 export default function DashboardContent() {
   const { data: filmData = [] } = useFilms({});
   const { data: newsData } = useNewies({});
-  const { data: contactData } = useContacts({});
+  // const { data: contactData } = useContacts({});
   const router = useRouter();
 
   // ---------- NEWS ----------
@@ -63,38 +61,38 @@ export default function DashboardContent() {
   const closeModal = () => setSelectedId(null);
 
   // ---------- CONTACTS ----------
-  const contactsArray = useMemo(
-    () => extractContacts(contactData as ContactResponse),
-    [contactData]
-  );
-  const leftContacts = useMemo(
-    () =>
-      contactsArray
-        .filter((c) => c?.departement?.name === DEPT_LEFT)
-        .map((c) => ({
-          label: c?.name || "WhatsApp",
-          phone: c?.no_whatsapp || "-",
-          onClick: () => {
-            const url = toWaLink(c?.no_whatsapp);
-            if (url) window.open(url, "_blank");
-          },
-        })),
-    [contactsArray]
-  );
-  const rightContacts = useMemo(
-    () =>
-      contactsArray
-        .filter((c) => c?.departement?.name === DEPT_RIGHT)
-        .map((c) => ({
-          label: c?.name || "WhatsApp",
-          phone: c?.no_whatsapp || "-",
-          onClick: () => {
-            const url = toWaLink(c?.no_whatsapp);
-            if (url) window.open(url, "_blank");
-          },
-        })),
-    [contactsArray]
-  );
+  // const contactsArray = useMemo(
+  //   () => extractContacts(contactData as ContactResponse),
+  //   [contactData]
+  // );
+  // const leftContacts = useMemo(
+  //   () =>
+  //     contactsArray
+  //       .filter((c) => c?.departement?.name === DEPT_LEFT)
+  //       .map((c) => ({
+  //         label: c?.name || "WhatsApp",
+  //         phone: c?.no_whatsapp || "-",
+  //         onClick: () => {
+  //           const url = toWaLink(c?.no_whatsapp);
+  //           if (url) window.open(url, "_blank");
+  //         },
+  //       })),
+  //   [contactsArray]
+  // );
+  // const rightContacts = useMemo(
+  //   () =>
+  //     contactsArray
+  //       .filter((c) => c?.departement?.name === DEPT_RIGHT)
+  //       .map((c) => ({
+  //         label: c?.name || "WhatsApp",
+  //         phone: c?.no_whatsapp || "-",
+  //         onClick: () => {
+  //           const url = toWaLink(c?.no_whatsapp);
+  //           if (url) window.open(url, "_blank");
+  //         },
+  //       })),
+  //   [contactsArray]
+  // );
 
   return (
     <div
@@ -255,10 +253,7 @@ export default function DashboardContent() {
 
       {/* Contact */}
       <div style={{ marginTop: 40 }}>
-        <ContactInfo
-          leftContacts={leftContacts}
-          rightContacts={rightContacts}
-        />
+        <ContactInfoContainer />
       </div>
 
       {/* -------- Modal Detail Berita -------- */}

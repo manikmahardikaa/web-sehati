@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useCallback } from "react";
 import {
   Row,
   Col,
@@ -12,19 +13,14 @@ import {
   Grid,
   Tabs,
 } from "antd";
-import {
-  SearchOutlined,
-  LeftOutlined,
-  RightOutlined,
-} from "@ant-design/icons";
+import { SearchOutlined, LeftOutlined, RightOutlined } from "@ant-design/icons";
 import { useContacts } from "@/app/hooks/admin/contact";
 import { ContactDataModel } from "@/app/models/admin/contact";
 
 const { Text } = Typography;
 
-/* ---------------- types & helpers ---------------- */
+/* ---------------- util & types ---------------- */
 type ApiContact = ContactDataModel;
-
 type ContactItem = { id: string; name: string; phone: string };
 
 function toWaLink(phone: string) {
@@ -51,7 +47,14 @@ const WaLogo = () => (
   </svg>
 );
 
-/* ---------------- UI pieces ---------------- */
+function titleCase(s?: string) {
+  return (s || "")
+    .replace(/[_-]+/g, " ")
+    .toLowerCase()
+    .replace(/\b\w/g, (m) => m.toUpperCase());
+}
+
+/* ---------------- kecil: kartu & grid ---------------- */
 function ContactCard({
   item,
   focused,
@@ -158,82 +161,84 @@ function ContactGrid({
   );
 }
 
-/* ---------------- main (with Tabs + API data) ---------------- */
+/* ---------------- main: Tabs dinamis dari departement ---------------- */
 export default function Content() {
   const screens = Grid.useBreakpoint();
   const { data: contactsRaw } = useContacts({});
 
   const [search, setSearch] = useState("");
-  const [pageKader, setPageKader] = useState(1);
-  const [pagePemegang, setPagePemegang] = useState(1);
   const pageSize = 4;
 
-  // Ambil array dari response API (bisa langsung array, atau {result: []})
+  // Normalisasi respons -> array ApiContact
   const contacts: ApiContact[] = useMemo(() => {
-    const raw: unknown = contactsRaw as unknown;
+    const raw: any = contactsRaw;
     if (!raw) return [];
     if (Array.isArray(raw)) return raw as ApiContact[];
-    const maybeObj = raw as { result?: unknown } | undefined;
-    if (Array.isArray(maybeObj?.result)) return maybeObj!.result as ApiContact[];
+    if (Array.isArray(raw?.result)) return raw.result as ApiContact[];
     return [];
   }, [contactsRaw]);
 
-  // Kelompokkan dan map ke ContactItem
-  const kaderSehati: ContactItem[] = useMemo(
-    () =>
-      contacts
-        .filter((c) => c.departement?.name?.toLowerCase() === "kader sehati")
-        .map((c) => ({
-          id: c.id,
-          name: c.name,
-          phone: c.no_whatsapp || "",
-        })),
-    [contacts]
-  );
+  // Group by departement name (asli dari API), lalu map ke ContactItem
+  const groups = useMemo(() => {
+    const map = new Map<
+      string, // deptName original
+      ContactItem[]
+    >();
+    for (const c of contacts) {
+      const dept = c.departement?.name || "Lainnya";
+      const arr = map.get(dept) || [];
+      arr.push({
+        id: c.id,
+        name: c.name,
+        phone: c.no_whatsapp || "",
+      });
+      map.set(dept, arr);
+    }
+    return map;
+  }, [contacts]);
 
-  const petugasLapangan: ContactItem[] = useMemo(
-    () =>
-      contacts
-        .filter(
-          (c) => c.departement?.name?.toLowerCase() === "petugas lapangan"
-        )
-        .map((c) => ({
-          id: c.id,
-          name: c.name,
-          phone: c.no_whatsapp || "",
-        })),
-    [contacts]
-  );
+  // Pencarian per grup
+  const filteredGroups = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    if (!q) return groups;
+    const out = new Map<string, ContactItem[]>();
+    for (const [dept, list] of groups.entries()) {
+      out.set(
+        dept,
+        list.filter((i) => i.name.toLowerCase().includes(q))
+      );
+    }
+    return out;
+  }, [groups, search]);
 
-  // Search (case-insensitive) di masing-masing kelompok
-  const filteredKader = useMemo(
-    () =>
-      kaderSehati.filter((k) =>
-        k.name.toLowerCase().includes(search.toLowerCase())
+  // State halaman per tab (key = dept original)
+  const [pages, setPages] = useState<Record<string, number>>({});
+  const getPage = useCallback((dept: string) => pages[dept] ?? 1, [pages]);
+  const setPage = useCallback((dept: string, p: number) => {
+    setPages((prev) => ({ ...prev, [dept]: p }));
+  }, []);
+
+  // Susun item Tabs secara dinamis
+  const tabItems = useMemo(() => {
+    return Array.from(filteredGroups.entries()).map(([dept, items]) => ({
+      key: dept, // pakai nama asli sebagai key
+      label: titleCase(dept), // tampilannya dibagusin
+      children: (
+        <ContactGrid
+          data={items}
+          page={getPage(dept)}
+          pageSize={pageSize}
+          onPageChange={(p) => setPage(dept, p)}
+        />
       ),
-    [kaderSehati, search]
-  );
-  const filteredPemegang = useMemo(
-    () =>
-      petugasLapangan.filter((k) =>
-        k.name.toLowerCase().includes(search.toLowerCase())
-      ),
-    [petugasLapangan, search]
-  );
+    }));
+  }, [filteredGroups, getPage, setPage]);
+
+  // Default active tab = grup pertama
+  const defaultActiveKey = tabItems[0]?.key;
 
   return (
     <div style={{ padding: screens.md ? "24px 24px 40px" : "16px" }}>
-      {/* Header */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 10,
-          marginBottom: 12,
-        }}
-      >
-      </div>
-
       {/* Search */}
       <div
         style={{
@@ -251,41 +256,17 @@ export default function Content() {
           value={search}
           onChange={(e) => {
             setSearch(e.target.value);
-            setPageKader(1);
-            setPagePemegang(1);
+            // reset semua halaman ke 1 saat cari
+            setPages({});
           }}
         />
       </div>
 
-      {/* Tabs */}
+      {/* Tabs dinamis berdasar nama departement */}
       <Tabs
-        defaultActiveKey="kader"
-        items={[
-          {
-            key: "kader",
-            label: "Kader SEHATI",
-            children: (
-              <ContactGrid
-                data={filteredKader}
-                page={pageKader}
-                pageSize={pageSize}
-                onPageChange={setPageKader}
-              />
-            ),
-          },
-          {
-            key: "pemegang",
-            label: "Pemegang Program Wilayah",
-            children: (
-              <ContactGrid
-                data={filteredPemegang}
-                page={pagePemegang}
-                pageSize={pageSize}
-                onPageChange={setPagePemegang}
-              />
-            ),
-          },
-        ]}
+        defaultActiveKey={defaultActiveKey}
+        items={tabItems}
+        destroyInactiveTabPane={false}
       />
     </div>
   );
